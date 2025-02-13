@@ -5,6 +5,7 @@ description = "Framework for studying learning dynamics of Pico models."
 authors = ["Richard Diehl Martinez <richarddiehl@gmail.com>"]
 license = "Apache 2.0"
 readme = "README.md"
+packages = [{include = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -13,14 +14,13 @@ torch = "^2.5.1"
 datasets = "^3.2.0"
 lightning = "^2.5.0.post0"
 
+[tool.poetry.scripts]
+analyze = "scripts.analyze:main"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.5"
-transformers = "^4.48.1"
-sentencepiece = "^0.2.0"
-fabric = "^3.2.2"
-deepspeed = "^0.16.3"
 wandb = "^0.19.5"
+pre-commit = "^4.1.0"
 
 [build-system]
 requires = ["poetry-core"]
