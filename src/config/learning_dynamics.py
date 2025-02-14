@@ -2,9 +2,8 @@
 Configuration classes for learning dynamics analysis.
 """
 
-from abc import ABC
 from dataclasses import dataclass, field
-from typing import List, Dict, Any
+from typing import List, Dict
 
 #####################
 # Metrics
@@ -22,28 +21,122 @@ from typing import List, Dict, Any
 
 
 @dataclass
-class BaseMetricConfig(ABC):
+class BaseComponentConfig:
     """
-    Base configuration for a metric. All metrics should implement this class.
+    Base configuration for a component of a model.
+
+    A component can be a single layer, group of layers, activations etc, the choice is arbitrary,
+    as long as the given metric defines how to compute the metric for the component.
+
+    Example:
+
+        name: ov_circuit # name of the component
+        layer_suffixes:
+            output_layer: "attention.out_proj" # suffix of the layer to compute the metric for
+            value_layer: "attention.v_proj" # suffix of the layer to compute the metric for
+        layers: [0,1,2,3,4,5,6,7,8,9,10,11] # layers to compute the metric for
+
+    Args:
+        name: str -- the name of the component.
+        layer_suffixes: Dict[str, str] -- maps the names of layers that make up a component
+            to the suffixes of those layers in the model.
+        layers: List[int] -- the layers of the model to compute the metric for.
     """
 
-    metric_name: str
-    data_split: str
+    name: str = None
+    layer_suffixes: Dict[str, str] = None
+    layers: List[int] = None
 
 
 @dataclass
-class BaseComparativeMetricConfig(ABC):
+class BaseMetricConfig:
     """
-    Base configuration for a metric.
+    Base configuration for a metric. All metrics should implement this class. Requires
+    specifying the components to compute the metric for, the metric name, and the data split.
+
+    Args:
+        components: List[BaseComponentConfig] -- the components to compute the metric for.
+        metric_name: str -- the name of the metric.
+        data_split: str -- the data split to compute the metric for (e.g. "train", "val", "test").
+
     """
 
-    target_checkpoint: int
-    metric_name: str
-    data_split: str
+    components: List[BaseComponentConfig] = field(default_factory=list)
+
+    metric_name: str = None
+    data_split: str = None
+
+    def __post_init__(self):
+        """
+        Post-initialization method to convert yaml dictionaries of components to proper
+        BaseComponentConfig objects.
+        """
+        for component in self.components:
+            if isinstance(component, dict):
+                self.components.append(BaseComponentConfig(**component))
+
+
+@dataclass
+class BaseComparativeMetricConfig(BaseMetricConfig):
+    """
+    Base configuration for a comparative metric (subclass of BaseMetricConfig).
+
+    A comparative metric is a metric that is computed on a pair of checkpoints to compare how
+    a model's activations or weights change between two different checkpoints.
+
+    Args:
+        target_checkpoint: int -- the checkpoint to compare the source checkpoint to.
+    """
+
+    target_checkpoint: int = None
 
 
 # -----------------
 # Metrics
+# -----------------
+
+
+@dataclass
+class NormMetricConfig(BaseMetricConfig):
+    """
+    Configuration for a norm metric.
+
+    Args:
+        data_type: str -- the type of data to compute the norm for (e.g. "weights", "activations", "gradients").
+    """
+
+    metric_name: str = "norm"
+
+    # NOTE: used to specify what type of norm to compute:
+    #       options are "Frobenius", "spectral", "max"
+    norm_type: str = None
+
+    # NOTE: used to specify what type of norm to compute;
+    #       options are "weights", "activations", "gradients"
+    data_type: str = None
+
+
+@dataclass
+class PERConfig(BaseMetricConfig):
+    """
+    Configuration for the Proportional Effective Rank (PER) metric.
+    The PER is a metric that measures the effective rank of a matrix, and is defined in:
+        Tending Towards Stability: Convergence Challenges in Small Language Models
+        https://aclanthology.org/2024.findings-emnlp.187/
+
+    Args:
+        data_type: str -- the type of data to compute the PER for (e.g. "weights", "activations", "gradients").
+    """
+
+    metric_name: str = "per"
+
+    # NOTE: used to specify what type of norm to compute;
+    #       options are "weights", "gradients"
+    data_type: str = None
+
+
+# -----------------
+# Comparative Metrics
 # -----------------
 
 
@@ -55,37 +148,6 @@ class CKAConfig(BaseComparativeMetricConfig):
     """
 
     metric_name: str = "cka"
-    data_split: str = "val"
-
-    # Specify what components to compute the CKA for; to do so, we specify a list of dictionaries,
-    # where each dictionary specifies the component name and the layer suffixes and layers to compute
-    # the CKA for.
-
-    # For example, if we want to compute the CKA for the OV circuit and the MLP, we would specify the following:
-
-    # components:
-    #   - name: ov_circuit
-    #       layer_suffixes:
-    #         output_layer: "attention.out_proj"
-    #         value_layer: "attention.v_proj"
-    #       layers: [0,1,2,3,4,5,6,7,8,9,10,11]
-    #   - name: mlp
-    #       layer_suffixes:
-    #         mlp: "swiglu.w_2"
-    #       layers: [0,1,2,3,4,5,6,7,8,9,10,11]
-
-    components: List[Dict[str, Any]] = field(default_factory=list)
-
-
-# TODO: add gradient similarity metric
-# @dataclass
-# class GradientSimilarityConfig(BaseMetricConfig):
-#     """
-#     Configuration for gradient similarity metric.
-#     """
-#     metric_name: str = "gradient_similarity"
-
-# TODO: add other metrics
 
 
 #####################
@@ -96,7 +158,8 @@ class CKAConfig(BaseComparativeMetricConfig):
 @dataclass
 class LearningDynamicsConfig:
     """
-    Configures the learning dynamic metrics to be computed.
+    Root configuration for learning dynamics metrics. Contains a list of metrics to compute,
+    and the steps to compute them for.
 
     Attributes:
         metrics: List of metric configurations

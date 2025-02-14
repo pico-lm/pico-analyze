@@ -169,6 +169,12 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-
 # ignoring system specific lock
+__pycache__/
+
+# ignoring all pycache
+**/__pycache__/
+**/pycache/
+
+
 poetry.lock
