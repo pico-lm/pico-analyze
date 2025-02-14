@@ -58,7 +58,7 @@ class BaseComponentConfig:
     """
 
     name: str = None
-    layer_suffixes: Dict[str, str] = None
+    layer_suffixes: str | Dict[str, str] = None
     layers: List[int] = None
 
 
@@ -69,15 +69,14 @@ class BaseMetricConfig:
     specifying the components to compute the metric for, the metric name, and the data split.
 
     Args:
-        components: List[BaseComponentConfig] -- the components to compute the metric for.
         metric_name: str -- the name of the metric.
+        components: List[BaseComponentConfig] -- the components to compute the metric for.
         data_split: str -- the data split to compute the metric for (e.g. "train", "val", "test").
 
     """
 
-    components: List[BaseComponentConfig] = field(default_factory=list)
-
     metric_name: str = None
+    components: List[BaseComponentConfig] = field(default_factory=list)
     data_split: str = None
 
     def __post_init__(self):
@@ -85,9 +84,15 @@ class BaseMetricConfig:
         Post-initialization method to convert yaml dictionaries of components to proper
         BaseComponentConfig objects.
         """
+        _process_components = []
+
         for component in self.components:
             if isinstance(component, dict):
-                self.components.append(BaseComponentConfig(**component))
+                _process_components.append(BaseComponentConfig(**component))
+            else:
+                _process_components.append(component)
+
+        self.components = _process_components
 
 
 @dataclass
@@ -120,8 +125,6 @@ class NormMetricConfig(BaseMetricConfig):
         data_type: str -- the type of data to compute the norm for (e.g. "weights", "activations", "gradients").
     """
 
-    metric_name: str = "norm"
-
     # NOTE: used to specify what type of norm to compute:
     #       options are "Frobenius", "spectral", "max"
     norm_type: str = None
@@ -144,8 +147,6 @@ class PERConfig(BaseMetricConfig):
         data_type: str -- the type of data to compute the PER for (e.g. "weights", "activations", "gradients").
     """
 
-    metric_name: str = "per"
-
     # NOTE: used to specify what type of norm to compute;
     #       options are "weights", "gradients"
     data_type: str = None
@@ -164,4 +165,4 @@ class CKAConfig(BaseComparativeMetricConfig):
     we need to specify the target_checkpoint.
     """
 
-    metric_name: str = "cka"
+    ...
