@@ -6,7 +6,6 @@ sets of activations are between two different checkpoints.
 from ._registry import register_metric
 from .base import BaseComparativeMetric
 
-import re
 from lib import cka
 
 # Typing imports
@@ -60,23 +59,26 @@ class CKA(BaseComparativeMetric):
 
         preprocessed_data = {}
         for component in self.metric_config.components:
-            if component["name"] == "ov_circuit":
+            # NOTE: Special Components
+            if component.name == "ov_circuit":
                 component_data = self.get_checkpoint_ov_activation(
                     checkpoint_activations,
                     checkpoint_weights,
-                    component["layer_suffixes"],
-                    component["layers"],
-                )
-            elif component["name"] == "mlp":
-                component_data = self.get_mlp_activation(
-                    checkpoint_activations,
-                    component["layer_suffixes"],
-                    component["layers"],
+                    component.layer_suffixes,
+                    component.layers,
                 )
             else:
-                raise ValueError(f"CKA Metric: Unknown component: {component['name']}")
+                # NOTE: these components are individual layer activations (i.e. these do not
+                #       require special computation across layers)
+                assert isinstance(component.layer_suffixes, str)
 
-            preprocessed_data[component["name"]] = component_data
+                component_data = self.get_layer_activation(
+                    checkpoint_activations,
+                    component.layer_suffixes,
+                    component.layers,
+                )
+
+            preprocessed_data[component.name] = component_data
 
         return preprocessed_data
 
@@ -130,13 +132,6 @@ class CKA(BaseComparativeMetric):
     ####
     # Helper functions
     ####
-
-    def _get_model_prefix(self, checkpoint_activation: Dict[str, torch.Tensor]):
-        """
-        Get the model prefix from the checkpoint activation keys.
-        """
-
-        return re.match(r"[^\d]+", list(checkpoint_activation.keys())[0]).group(0)
 
     """
     Helper functions for getting component states. What a 'component' is, can be a bit arbitrary. 
@@ -217,10 +212,10 @@ class CKA(BaseComparativeMetric):
 
         return checkpoint_ov_activation
 
-    def get_mlp_activation(
+    def get_layer_activation(
         self,
         checkpoint_activation: Dict[str, torch.Tensor],
-        layer_suffixes: Dict[str, str],
+        layer_suffix: str,
         layers: List[int],
     ):
         """
@@ -229,23 +224,23 @@ class CKA(BaseComparativeMetric):
 
         Args:
             checkpoint_activation: A dictionary mapping layer names to activations.
-            layer_suffixes: A dictionary mapping layer names to suffixes.
+            layer_suffix: The suffix of the layer to extract the activations from.
             layers: A list of layers to compute the MLP activations for.
 
         Returns:
             A dictionary mapping layer names to MLP activations.
         """
 
-        checkpoint_mlp_activation = {}
+        checkpoint_layer_activation = {}
 
         _model_prefix = self._get_model_prefix(checkpoint_activation)
 
         for layer_idx in layers:
-            mlp_activation = checkpoint_activation[
-                f"{_model_prefix}{layer_idx}.{layer_suffixes['mlp']}"
+            layer_activation = checkpoint_activation[
+                f"{_model_prefix}{layer_idx}.{layer_suffix}"
             ]
-            checkpoint_mlp_activation[f"{_model_prefix}{layer_idx}.mlp"] = (
-                mlp_activation
-            )
+            checkpoint_layer_activation[
+                f"{_model_prefix}{layer_idx}.{layer_suffix}"
+            ] = layer_activation
 
-        return checkpoint_mlp_activation
+        return checkpoint_layer_activation

@@ -3,10 +3,12 @@ Base class for all metrics.
 """
 
 from abc import ABC, abstractmethod
+import re
 
 # Typing
 from src.config.learning_dynamics import BaseMetricConfig
 from typing import Dict, Any
+import torch
 
 
 class BaseMetric(ABC):
@@ -21,6 +23,26 @@ class BaseMetric(ABC):
         """
         self.metric_config = metric_config
         self.run_config = run_config
+
+    def _get_model_prefix(self, checkpoint_activation: Dict[str, torch.Tensor]):
+        """
+        Common helper function to get the model prefix from the checkpoint activation keys.
+
+        The model prefix is the part of the key that is common to all the keys in the checkpoint
+        activation dictionary. For example, if the checkpoint activation keys are:
+
+        ```
+        {
+            "model.layer1.0.weight": torch.Tensor,
+            "model.layer1.1.weight": torch.Tensor,
+            "model.layer2.0.weight": torch.Tensor,
+        }
+        ```
+
+        The model prefix is "model".
+        """
+
+        return re.match(r"[^\d]+", list(checkpoint_activation.keys())[0]).group(0)
 
     @abstractmethod
     def compute(self, data: Dict[str, Any]):

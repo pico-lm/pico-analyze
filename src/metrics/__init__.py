@@ -2,9 +2,13 @@
 
 # NOTE: Importing these metrics automatically adds them to the METRIC_REGISTRY
 from .base import BaseMetric, BaseComparativeMetric
-from .cka import CKA
-# TODO: Add other metrics here
 
+# Implemented Metrics
+from .cka import CKA
+from .norm import NormMetric
+from .per import PERMetric
+
+# Registry
 from ._registry import METRIC_REGISTRY
 
 # Typing
