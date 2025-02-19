@@ -5,7 +5,7 @@ Given a metrics config and a trained model, this script will load in the model a
 checkpoints and computed the specified learning dynamics metrics.
 """
 
-from src.utils.data import get_learning_dynamics_data, get_training_config
+from src.utils.data import get_checkpoint_states, get_training_config
 from src.utils.initialization import initialize_config, CheckpointLocation
 from src.metrics import get_metric, BaseComparativeMetric
 
@@ -44,12 +44,12 @@ def main(config_path: str, repo_id: str, branch: str, run_path: str):
         # NOTE: if the metric is a comparative metric, we need to set the target checkpoint
         # for the metric.
         if isinstance(metric, BaseComparativeMetric):
-            target_data = get_learning_dynamics_data(
+            target_checkpoint_states = get_checkpoint_states(
                 checkpoint_location=checkpoint_location,
                 step=metric_config.target_checkpoint,
                 data_split=metric_config.data_split,
             )
-            metric.set_target(target_data)
+            metric.set_target(target_checkpoint_states)
 
         metrics[metric_config.metric_name] = metric
 
@@ -58,15 +58,17 @@ def main(config_path: str, repo_id: str, branch: str, run_path: str):
         step_metric_data = {}
 
         for metric_name, metric in metrics.items():
-            data = get_learning_dynamics_data(
+            checkpoint_states = get_checkpoint_states(
                 checkpoint_location=checkpoint_location,
                 step=step,
-                data_split=metric_config.data_split,
+                data_split=metric.metric_config.data_split,
             )
 
-            metric_data = metric.compute(data)
+            metric_data = metric(checkpoint_states)
 
             step_metric_data[metric_name] = metric_data
+
+        # do something with the data
 
         # At the end of each step we sve out the data for each of the different metrics
         # TODO: Save out step_metric_data

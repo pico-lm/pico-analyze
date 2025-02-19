@@ -5,22 +5,21 @@ Configuration classes for learning dynamics analysis.
 from dataclasses import dataclass, field
 from typing import List
 
-from src.config.metrics import (
+
+from src.config._registry import METRIC_CONFIG_REGISTRY
+
+from src.config.base import (
     BaseMetricConfig,
     BaseComparativeMetricConfig,
-    METRIC_CONFIG_REGISTRY,
 )
 
 
 @dataclass
 class LearningDynamicsConfig:
     """
-    Root configuration for learning dynamics metrics. Contains a list of metrics to compute,
-    and the steps to compute them for.
-
-    Attributes:
-        metrics: List of metric configurations
-        steps: List of steps to compute metrics for
+    Root configuration for specifying what learning dynamics metrics to compute, and at which
+    checkpoint steps to compute them for. Metrics can be single-checkpoint or comparative metrics,
+    and are computed on components of the model.
     """
 
     metrics: List[BaseMetricConfig | BaseComparativeMetricConfig] = field(
@@ -37,15 +36,28 @@ class LearningDynamicsConfig:
         metrics:
             - metric_name: cka
               target_checkpoint: 1000
-              [...]
-            - metric_name: gradient_similarity
-              [...]
+              data_split: "val"
+              components:
+                - component_name: simple
+                  layer_suffixes: "swiglu.w_2"
+                  layers: [0,1,2,3,4,5,6,7,8,9,10,11]
+                - component_name: ov_circuit
+                  layer_suffixes:
+                    output_layer: "attention.o_proj"
+                    value_layer: "attention.v_proj"
+                  layers: [0,1,2,3,4,5,6,7,8,9,10,11]
+            - metric_name: norm
+              data_split: "train"
+              components:
+                - component_name: simple
+                  layer_suffixes: "swiglu.w_2"
+                  layers: [0,1,2,3,4,5,6,7,8,9,10,11]
 
         This will be converted to the following config object:
         LearningDynamicsConfig(
             metrics=[
                 CKAConfig(metric_name="cka", target_checkpoint=1000, ...),
-                GradientSimilarityConfig(metric_name="gradient_similarity", ...)
+                NormConfig(metric_name="norm", data_split="train", ...)
             ]
         )
         """
