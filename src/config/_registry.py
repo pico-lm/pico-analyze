@@ -1,6 +1,6 @@
 from typing import Type, TypeVar
 
-from .base import BaseMetricConfig
+from src.config._base import BaseMetricConfig
 
 T = TypeVar("T", bound=BaseMetricConfig)
 

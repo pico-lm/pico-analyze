@@ -1,6 +1,6 @@
 from typing import Mapping, Type, TypeVar
 
-from .base import BaseMetric
+from src.metrics.base import BaseMetric
 
 T = TypeVar("T", bound=BaseMetric)
 

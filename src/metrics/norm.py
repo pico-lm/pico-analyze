@@ -2,8 +2,8 @@
 Norm metrics compute the norm of weights, activations, gradients, etc.
 """
 
-from ._registry import register_metric
-from .base import BaseMetric
+from src.metrics._registry import register_metric
+from src.metrics.base import BaseMetric
 from src.config.learning_dynamics import BaseMetricConfig
 
 import torch

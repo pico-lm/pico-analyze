@@ -3,8 +3,8 @@ CKA (Centered Kernel Alignment) is a comparative metric for comparing how simila
 sets of activations are between two different checkpoints.
 """
 
-from ._registry import register_metric
-from .base import BaseComparativeMetric
+from src.metrics._registry import register_metric
+from src.metrics.base import BaseComparativeMetric
 
 from lib import cka
 

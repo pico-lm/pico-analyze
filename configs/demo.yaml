@@ -1,37 +1,36 @@
+analysis_name: "demo-analysis"
 
 metrics: 
-  # - metric_name: cka
-  #   target_checkpoint: 100
-  #   data_split: "val"
-  #   components: 
-  #     - name: ov_circuit
-  #       layer_suffixes: 
-  #         output_layer: "attention.o_proj"
-  #         value_layer: "attention.v_proj"
-  #       layers: [0,1,2,3,4,5,6,7,8,9,10,11]
-  #     - name: mlp
-  #       layer_suffixes:
-  #         mlp: "swiglu.w_2"
-  #       layers: [0,1,2,3,4,5,6,7,8,9,10,11]
-
-  # - metric_name: norm
-  #   data_type: "weights"
-  #   data_split: "train"
-  #   norm_type: "frobenius"
-  #   components: 
-  #     - name: mlp
-  #       layer_suffixes: "swiglu.w_2"
-  #       layers: [0,1,2,3,4,5,6,7,8,9,10,11]
-
-  - metric_name: per
-    data_type: "weights"
-    data_split: "train"
+  - metric_name: cka
+    target_checkpoint: 100
+    data_split: "val"
     components: 
-      - name: mlp
+      - component_name: ov_circuit
+        layer_suffixes: 
+          output_layer: "attention.o_proj"
+          value_layer: "attention.v_proj"
+        layers: [0,1,2,3,4,5,6,7,8,9,10,11]
+      - component_name: simple
+        data_type: "weights"
         layer_suffixes: "swiglu.w_2"
         layers: [0,1,2,3,4,5,6,7,8,9,10,11]
-
+  - metric_name: per
+    data_split: "train"
+    components: 
+      - component_name: simple
+        data_type: "weights"
+        layer_suffixes: "swiglu.w_2"
+        layers: [0,1,2,3,4,5,6,7,8,9,10,11]
+      
 steps: 
   start: 0
   end: 100
   step: 50
+
+monitoring: 
+  output_dir: "analysis_results"
+
+  save_to_wandb: true
+  wandb:
+    entity: "pico-lm"
+    project: "pico-analysis"

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 The main script for running learning dynamics analysis.
 
@@ -5,11 +6,21 @@ Given a metrics config and a trained model, this script will load in the model a
 checkpoints and computed the specified learning dynamics metrics.
 """
 
-from src.utils.data import get_checkpoint_states, get_training_config
-from src.utils.initialization import initialize_config, CheckpointLocation
-from src.metrics import get_metric, BaseComparativeMetric
-
 import click
+import os
+import json
+from dataclasses import asdict
+
+from src.utils.data import get_checkpoint_states, get_training_config
+from src.utils.initialization import (
+    initialize_config,
+    CheckpointLocation,
+    initialize_output_dir,
+    initialize_wandb,
+    initialize_logging,
+)
+from src.metrics import get_metric, BaseComparativeMetric
+from src.utils.logging import pretty_print_config
 
 
 @click.command()
@@ -23,16 +34,62 @@ import click
 @click.option("--branch", type=str, help="Branch name.")
 @click.option("--run_path", type=str, help="Path to the run directory.")
 def main(config_path: str, repo_id: str, branch: str, run_path: str):
+    """
+    The main function for running learning dynamics analysis. Also note that config_path is a
+    required argument, AND either repo_id must be provided or branch and run_path must be provided.
+    If this is not specified here, it will raise an error when the checkpoint location is
+    initialized.
+
+    Args:
+        config_path: str -- the path to the metrics configuration file.  (required)
+
+        repo_id: str -- the repository id.
+        branch: str -- the branch name.
+        run_path: str -- the path to the run directory.
+    """
+
     # Loads in the metrics config (the config that specifies the metrics to compute)
     metrics_config = initialize_config(config_path)
 
     # A helper class that stores the checkpoint location (either a local run or a remote run on HF)
+    # NOTE: this will raise an error if repo_id is not provided and branch and run_path are not
+    # provided.
     checkpoint_location = CheckpointLocation(repo_id, branch, run_path)
 
     # Loads in the training config (the config that specifies the model architecture, etc.) for the
     # given checkpoint location. NOTE: we use this to automatically determine parts of the model
     # architecture (e.g. the hidden dimension, number of attention heads, etc.)
     training_config = get_training_config(checkpoint_location)
+
+    ############################################################
+    #
+    # Monitoring Setup (Logging and Wandb)
+    #
+    ############################################################
+
+    # Set up the output directory
+    output_dir = initialize_output_dir(metrics_config, training_config)
+    logger = initialize_logging(output_dir)
+
+    # Log the learning dynamics and training configurations to the logger
+    logger.info("=" * 80)
+    logger.info("Initializing Pico Analysis")
+    logger.info("=" * 80)
+
+    pretty_print_config(logger, "Learning Dynamics Config", asdict(metrics_config))
+    pretty_print_config(logger, "Training Config", training_config)
+
+    logger.info("=" * 80 + "\n")
+
+    # Set up the wandb run
+    if metrics_config.monitoring.save_to_wandb:
+        wandb_run = initialize_wandb(metrics_config, training_config)
+
+    ############################################################
+    #
+    # Setting up Metrics
+    #
+    ############################################################
 
     metrics = {}
 
@@ -53,9 +110,16 @@ def main(config_path: str, repo_id: str, branch: str, run_path: str):
 
         metrics[metric_config.metric_name] = metric
 
+    ############################################################
+    #
+    # Computing and Logging Metrics over the checkpoint steps
+    #
+    ############################################################
+
     # Computing the metrics for each step
     for step in metrics_config.steps:
-        step_metric_data = {}
+        step_directory = os.path.join(output_dir, f"step_{step}")
+        os.makedirs(step_directory, exist_ok=True)
 
         for metric_name, metric in metrics.items():
             checkpoint_states = get_checkpoint_states(
@@ -64,14 +128,26 @@ def main(config_path: str, repo_id: str, branch: str, run_path: str):
                 data_split=metric.metric_config.data_split,
             )
 
-            metric_data = metric(checkpoint_states)
+            # NOTE: metric returns a list of dictionaries which corresponds to metric data
+            # for each component specified in the metrics config.
+            component_metrics_list = metric(checkpoint_states)
 
-            step_metric_data[metric_name] = metric_data
+            component_metrics_dict = {}
+            for component_metrics in component_metrics_list:
+                component_metrics_dict.update(component_metrics)
 
-        # do something with the data
+            # store out the data to the output directory
+            with open(os.path.join(step_directory, f"{metric_name}.json"), "w") as f:
+                json.dump(component_metrics_dict, f)
 
-        # At the end of each step we sve out the data for each of the different metrics
-        # TODO: Save out step_metric_data
+            if metrics_config.monitoring.save_to_wandb:
+                # Create a nested dictionary with metric name as prefix
+                wandb_formatted_data = {
+                    f"{metric_name}/{layer}": value
+                    for layer, value in component_metrics_dict.items()
+                }
+                # Add the step information
+                wandb_run.log(wandb_formatted_data, step=step)
 
 
 if __name__ == "__main__":

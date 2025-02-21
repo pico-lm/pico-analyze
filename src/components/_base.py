@@ -8,7 +8,7 @@ import os
 # typing imports
 import torch
 from typing import Dict, Any
-from src.config.base import BaseComponentConfig
+from src.config._base import BaseComponentConfig
 
 
 class BaseComponent(ABC):

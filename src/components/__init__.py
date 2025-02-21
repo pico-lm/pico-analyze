@@ -1,16 +1,16 @@
 # ruff: noqa: F401
 
 # NOTE: Importing these components automatically adds them to the COMPONENT_REGISTRY
-from .base import BaseComponent
+from src.components._base import BaseComponent
 
 # registered components
-from .simple import SimpleComponent
-from .compound import OVComponent
+from src.components.simple import SimpleComponent
+from src.components.compound import OVComponent
 
-from ._registry import COMPONENT_REGISTRY
+from src.components._registry import COMPONENT_REGISTRY
 
 # typing imports
-from src.config.base import BaseComponentConfig
+from src.config._base import BaseComponentConfig
 from typing import Dict, Any
 
 COMPONENT_CACHE = {}

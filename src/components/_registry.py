@@ -1,6 +1,6 @@
 from typing import Mapping, Type, TypeVar
 
-from .base import BaseComponent
+from src.components._base import BaseComponent
 
 T = TypeVar("T", bound=BaseComponent)
 
