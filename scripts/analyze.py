@@ -137,13 +137,19 @@ def main(config_path: str, repo_id: str, branch: str, run_path: str):
                 component_metrics_dict.update(component_metrics)
 
             # store out the data to the output directory
-            with open(os.path.join(step_directory, f"{metric_name}.json"), "w") as f:
+            with open(
+                os.path.join(
+                    step_directory,
+                    f"{metric_name}_{metric.metric_config.data_split}.json",
+                ),
+                "w",
+            ) as f:
                 json.dump(component_metrics_dict, f)
 
             if metrics_config.monitoring.save_to_wandb:
                 # Create a nested dictionary with metric name as prefix
                 wandb_formatted_data = {
-                    f"{metric_name}/{layer}": value
+                    f"{metric_name}_{metric.metric_config.data_split}/{layer}": value
                     for layer, value in component_metrics_dict.items()
                 }
                 # Add the step information
