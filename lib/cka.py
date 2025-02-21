@@ -99,7 +99,7 @@ def cka(gram_x, gram_y, debiased=False):
 
     normalization_x = np.linalg.norm(gram_x)
     normalization_y = np.linalg.norm(gram_y)
-    return scaled_hsic / (normalization_x * normalization_y)
+    return float(scaled_hsic / (normalization_x * normalization_y))
 
 
 def _debiased_dot_product_similarity_helper(
@@ -174,4 +174,4 @@ def feature_space_linear_cka(features_x, features_y, debiased=False):
             )
         )
 
-    return dot_product_similarity / (normalization_x * normalization_y)
+    return float(dot_product_similarity / (normalization_x * normalization_y))
