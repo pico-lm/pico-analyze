@@ -4,9 +4,18 @@
 from .base import BaseMetric, BaseComparativeMetric
 
 # Implemented Metrics
-from .cka import CKA
+
+# Base Metrics
 from .norm import NormMetric
 from .per import PERMetric
+from .condition_number import ConditionNumberMetric
+from .gini import GiniMetric
+from .hoyer import HoyerMetric
+
+
+# Comparative Metrics (between two checkpoints)
+from .cka import CKAMetric
+from .pwcca import PWCCAMetric
 
 # Registry
 from ._registry import METRIC_REGISTRY

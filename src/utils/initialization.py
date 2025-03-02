@@ -65,7 +65,7 @@ def initialize_logging(analysis_dir: str) -> logging.Logger:
         logging.Logger: Configured logger instance
     """
     # Create logger
-    logger = logging.getLogger("pico-analysis")
+    logger = logging.getLogger("pico-analyze")
     logger.setLevel(logging.INFO)
 
     # Remove any existing handlers

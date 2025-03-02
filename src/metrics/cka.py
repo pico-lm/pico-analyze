@@ -13,7 +13,7 @@ import torch
 
 
 @register_metric("cka")
-class CKA(BaseComparativeMetric):
+class CKAMetric(BaseComparativeMetric):
     """
     Class for computing CKA (Centered Kernel Alignment) between two activations.
 
