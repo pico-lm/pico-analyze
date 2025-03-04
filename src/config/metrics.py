@@ -20,6 +20,16 @@ from src.config._registry import register_metric_config
 
 
 @dataclass
+@register_metric_config("condition_number")
+class ConditionNumberConfig(BaseMetricConfig):
+    """
+    Configuration for the condition number metric.
+    """
+
+    ...
+
+
+@dataclass
 @register_metric_config("norm")
 class NormConfig(BaseMetricConfig):
     """
@@ -44,9 +54,40 @@ class PERConfig(BaseMetricConfig):
     ...
 
 
+@dataclass
+@register_metric_config("gini")
+class GiniConfig(BaseMetricConfig):
+    """
+    Configuration for the Gini metric.
+    """
+
+    ...
+
+
+@dataclass
+@register_metric_config("hoyer")
+class HoyerConfig(BaseMetricConfig):
+    """
+    Configuration for the Hoyer metric.
+    """
+
+    ...
+
+
 # -----------------
 # Multi-Checkpoint (Comparative) Metrics
 # -----------------
+
+
+@dataclass
+@register_metric_config("pwcca")
+class PWCCAConfig(BaseComparativeMetricConfig):
+    """
+    Configuration for the PWCCA metric; a comparative metric that computes the similarity between two
+    layers' activations at two different checkpoints.
+    """
+
+    ...
 
 
 @dataclass

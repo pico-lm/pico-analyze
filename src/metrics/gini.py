@@ -6,7 +6,6 @@ measure the sparsity of a matrix.
 
 from src.metrics._registry import register_metric
 from src.metrics.base import BaseMetric
-from src.config.learning_dynamics import BaseMetricConfig
 
 import torch
 
@@ -24,29 +23,41 @@ class GiniMetric(BaseMetric):
     where x_i is the i-th element of the data, and x is the sum of all the elements in the data.
     """
 
-    def __init__(self, metric_config: BaseMetricConfig, *args):
-        super().__init__(metric_config, *args)
-
     def compute_metric(self, component_layer_data: torch.Tensor) -> float:
         """
         Compute the Gini coefficient of some component data.
+
+        The Gini coefficient measures inequality in a distribution, with values ranging from 0
+        (perfect equality) to 1 (perfect inequality).
+
+        This implementation uses a more memory-efficient algorithm that avoids creating
+        the full pairwise difference matrix.
+
+        Args:
+            component_layer_data: Tensor containing the data to analyze
+
+        Returns:
+            float: The computed Gini coefficient
         """
-
         # Reshape the input tensor to a 1D array
-        x = component_layer_data.view(-1)
-        n = x.shape[0]
+        x = component_layer_data.flatten()
+        x = torch.abs(x)
 
+        # Sort the flattened vector in ascending order
+        x_sorted, _ = torch.sort(x)
+        n = x_sorted.shape[0]
         if n == 0:
-            return 0.0
+            return 0.0  # Edge case if the matrix is empty
 
-        mu = x.mean()
-        if mu == 0:
-            return 0.0
+        # Compute the mean denominator
+        total = x_sorted.sum()
+        if total == 0:
+            return 0.0  # If all entries are zero, Gini is 0 by convention
 
-        # Expand to compare each element pair
-        x_expanded = x.unsqueeze(0)  # shape (1, n)
-        diff_matrix = torch.abs(x_expanded - x_expanded.T)  # shape (n, n)
+        # Apply the formula
+        # sum_{i=1 to n} of (2i - n - 1) * x_sorted[i-1]
+        idx = torch.arange(1, n + 1, dtype=x.dtype, device=x.device)
+        numerator = ((2 * idx - n - 1) * x_sorted).sum()
 
-        gini = diff_matrix.sum() / (2 * n**2 * mu)
-
-        return gini.item()
+        G = numerator / (n * total)
+        return G.item()

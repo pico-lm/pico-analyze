@@ -1,4 +1,4 @@
-analysis_name: "demo-analysis"
+analysis_name: "demo-analysis-3"
 
 metrics: 
   - metric_name: cka
@@ -6,6 +6,7 @@ metrics:
     data_split: "val"
     components: 
       - component_name: ov_circuit
+        data_type: "activations"
         layer_suffixes: 
           output_layer: "attention.o_proj"
           value_layer: "attention.v_proj"
@@ -21,7 +22,47 @@ metrics:
         data_type: "weights"
         layer_suffixes: "swiglu.w_2"
         layers: [0,1,2,3,4,5,6,7,8,9,10,11]
-      
+  - metric_name: condition_number
+    data_split: "train"
+    components: 
+      - component_name: simple
+        data_type: "weights"
+        layer_suffixes: "swiglu.w_2"
+        layers: [0,1,2,3,4,5,6,7,8,9,10,11]
+  - metric_name: gini
+    data_split: "val"
+    components: 
+      - component_name: simple
+        data_type: "activations"
+        layer_suffixes: "attention.o_proj"
+        layers: [0,1,2,3,4,5,6,7,8,9,10,11]
+  - metric_name: hoyer
+    data_split: "val"
+    components: 
+      - component_name: simple
+        data_type: "activations"
+        layer_suffixes: "attention.v_proj"
+        layers: [0,1,2,3,4,5,6,7,8,9,10,11]
+  - metric_name: pwcca
+    target_checkpoint: 50
+    data_split: "train"
+    components: 
+      - component_name: simple
+        data_type: "gradients"
+        layer_suffixes: "attention.v_proj"
+        layers: [0,1,2,3,4,5,6,7,8,9,10,11]
+  - metric_name: norm
+    data_split: "val"
+    norm_type: "nuclear"
+    components: 
+      - component_name: ov_circuit
+        data_type: "weights"
+        layer_suffixes: 
+          output_layer: "attention.o_proj"
+          value_layer: "attention.v_proj"
+        layers: [0,1,2,3,4,5,6,7,8,9,10,11]
+        
+
 steps: 
   start: 0
   end: 100

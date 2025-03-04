@@ -27,7 +27,9 @@ class PERMetric(BaseMetric):
 
         for component in self.metric_config.components:
             if component.data_type not in ["weights", "gradients"]:
-                raise ValueError(f"Invalid data_type for: {component.data_type}")
+                raise ValueError(
+                    f"Invalid component data_type for PERMetric: {component.data_type}"
+                )
 
     def compute_metric(self, component_layer_data: torch.Tensor) -> float:
         """

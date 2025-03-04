@@ -3,7 +3,8 @@ PWCCA (Projection Weighted Canonical Correlation Analysis) is a comparative metr
 how similar two sets of activations are between two different checkpoints.
 """
 
-from src.metrics.base import BaseComparativeMetric, BaseMetricConfig, register_metric
+from src.metrics._registry import register_metric
+from src.metrics.base import BaseComparativeMetric
 from lib.svcca.pwcca import compute_pwcca
 
 # Typing imports
@@ -20,9 +21,6 @@ class PWCCAMetric(BaseComparativeMetric):
 
     Reference: https://arxiv.org/abs/1806.05759
     """
-
-    def __init__(self, metric_config: BaseMetricConfig, *args):
-        super().__init__(metric_config, *args)
 
     def compute_metric(
         self,
@@ -41,6 +39,8 @@ class PWCCAMetric(BaseComparativeMetric):
             dtype=torch.float32
         ).numpy()
 
-        return compute_pwcca(
+        pwcca_metric, _, _ = compute_pwcca(
             np_source_component_layer_data, np_target_component_layer_data
         )
+
+        return float(pwcca_metric)

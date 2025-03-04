@@ -5,7 +5,7 @@ from src.components._base import BaseComponent
 
 # registered components
 from src.components.simple import SimpleComponent
-from src.components.compound import OVComponent
+from src.components.ov_circuit import OVComponent
 
 from src.components._registry import COMPONENT_REGISTRY
 

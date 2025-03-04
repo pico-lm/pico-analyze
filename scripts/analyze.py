@@ -20,7 +20,7 @@ from src.utils.initialization import (
     initialize_logging,
 )
 from src.metrics import get_metric, BaseComparativeMetric
-from src.utils.logging import pretty_print_config
+from src.utils.logging import pretty_print_config, pretty_print_component_metrics
 
 
 @click.command()
@@ -121,6 +121,8 @@ def main(config_path: str, repo_id: str, branch: str, run_path: str):
         step_directory = os.path.join(output_dir, f"step_{step}")
         os.makedirs(step_directory, exist_ok=True)
 
+        step_metrics = {}
+
         for metric_name, metric in metrics.items():
             checkpoint_states = get_checkpoint_states(
                 checkpoint_location=checkpoint_location,
@@ -135,6 +137,8 @@ def main(config_path: str, repo_id: str, branch: str, run_path: str):
             component_metrics_dict = {}
             for component_metrics in component_metrics_list:
                 component_metrics_dict.update(component_metrics)
+
+            step_metrics[metric_name] = component_metrics_dict
 
             # store out the data to the output directory
             with open(
@@ -154,6 +158,9 @@ def main(config_path: str, repo_id: str, branch: str, run_path: str):
                 }
                 # Add the step information
                 wandb_run.log(wandb_formatted_data, step=step)
+
+        # Log out all of the metrics at the current step
+        pretty_print_component_metrics(logger, step, step_metrics)
 
 
 if __name__ == "__main__":

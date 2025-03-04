@@ -47,6 +47,19 @@ class BaseComponent(ABC):
 
         return os.path.commonprefix(_activation_layernames)
 
+    def check_component_config(self, component_config: BaseComponentConfig) -> None:
+        """
+        Check the component config; components should specify the required keys in the component
+        config by overriding this method. NOTE: by default, all components require a data type;
+        i.e. whether the component is an activation, weight, or gradient.
+
+        Args:
+            component_config: BaseComponentConfig -- the component configuration.
+        """
+        assert (
+            component_config.data_type is not None
+        ), "Data type must be specified in component config"
+
     @abstractmethod
     def __call__(
         self,
@@ -71,4 +84,5 @@ class BaseComponent(ABC):
                     "model.1.component_name": torch.Tensor,
                 }
         """
-        raise NotImplementedError
+
+        self.check_component_config(component_config)

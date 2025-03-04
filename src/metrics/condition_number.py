@@ -2,8 +2,10 @@
 This module contains the implementation of the singular values metric.
 """
 
+from src.metrics._registry import register_metric
+from src.metrics.base import BaseMetric
+
 import torch
-from src.metrics.base import BaseMetric, BaseMetricConfig, register_metric
 
 
 @register_metric("condition_number")
@@ -13,9 +15,6 @@ class ConditionNumberMetric(BaseMetric):
     ratio of the largest to smallest singular value of the input. It gives a measure of how
     sensitive the output is to small changes in the input.
     """
-
-    def __init__(self, metric_config: BaseMetricConfig, *args):
-        super().__init__(metric_config, *args)
 
     def compute_metric(self, component_layer_data: torch.Tensor) -> float:
         """
@@ -28,4 +27,4 @@ class ConditionNumberMetric(BaseMetric):
         # Compute the condition number
         condition_number = torch.max(singular_values) / torch.min(singular_values)
 
-        return condition_number
+        return condition_number.item()

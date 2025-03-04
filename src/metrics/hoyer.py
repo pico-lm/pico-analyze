@@ -4,9 +4,9 @@ Hoyer's sparsity metric is a measure of the sparsity of a matrix.
 
 from src.metrics._registry import register_metric
 from src.metrics.base import BaseMetric
-from src.config.learning_dynamics import BaseMetricConfig
 
 import torch
+import math
 
 
 @register_metric("hoyer")
@@ -14,27 +14,20 @@ class HoyerMetric(BaseMetric):
     """
     Hoyer's sparsity metric is a measure of the sparsity of a matrix. Formally, it is defined as:
 
-        Hoyer(P) = (||P||_0 - 1) / (||P||_0 * n)
+        Hoyer(P) = (sqrt(n) - ||P||_1 / ||P||_2) / (sqrt(n) - 1)
 
-    where P is the parameter matrix, ||.||_0 is the number of non-zero elements in a matrix, and n is the
-    total number of elements in the matrix.
+    where P is the parameter matrix, ||.||_1 is the L1 norm, and ||.||_2 is the L2 norm.
     """
-
-    def __init__(self, metric_config: BaseMetricConfig, *args):
-        super().__init__(metric_config, *args)
 
     def compute_metric(self, component_layer_data: torch.Tensor) -> float:
         """
         Computes the Hoyer sparsity metric for a given component layer data.
         """
 
-        # Compute the number of non-zero elements in the matrix
-        num_non_zero = (component_layer_data != 0).sum().item()
+        x = component_layer_data.flatten()
+        n = x.numel()
 
-        # Compute the total number of elements in the matrix
-        total_elements = component_layer_data.numel()
-
-        # Compute the Hoyer sparsity metric
-        hoyer_sparsity = (num_non_zero - 1) / (num_non_zero * total_elements)
-
-        return hoyer_sparsity
+        # Compute the L1 and L2 norms of the component layer data
+        l1_norm = torch.norm(component_layer_data, p=1).item()
+        l2_norm = torch.norm(component_layer_data, p=2).item()
+        return (math.sqrt(n) - l1_norm / l2_norm) / (math.sqrt(n) - 1)

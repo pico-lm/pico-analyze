@@ -27,22 +27,18 @@ class SimpleComponent(BaseComponent):
         component_config: BaseComponentConfig,
     ) -> Dict[str, Any]:
         """
-        Given a dictionary of checkpoint data, extract
-
-        the activations, weights, or gradients for
-        the given layer suffix and layer
+        Given a dictionary of checkpoint data, extract the activations, weights, or gradients for
+        the given layer suffix and layer.
 
         Args:
-            checkpoint_states: Checkpoint data (activations, weights, gradients
+            checkpoint_states: Checkpoint data (activations, weights, gradients)
             component_config: The component configuration.
 
         Returns:
             A dictionary mapping layer names to MLP activations.
         """
 
-        assert (
-            component_config.data_type is not None
-        ), "Data type must be specified in component config"
+        super().__call__(checkpoint_states, component_config)
 
         checkpoint_layer_component = {}
 

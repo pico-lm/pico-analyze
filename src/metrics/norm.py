@@ -24,7 +24,9 @@ class NormMetric(BaseMetric):
 
         for component in self.metric_config.components:
             if component.data_type not in ["weights", "activations", "gradients"]:
-                raise ValueError(f"Invalid data_type for: {component.data_type}")
+                raise ValueError(
+                    f"Invalid component data_type for NormMetric: {component.data_type}"
+                )
 
         # NOTE: We use the torch.norm function to compute the norm of the data.
         if self.metric_config.norm_type == "frobenius":
