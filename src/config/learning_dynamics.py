@@ -49,17 +49,21 @@ class LearningDynamicsConfig:
               data_split: "val"
               components:
                 - component_name: simple
+                  data_type: "weights"
                   layer_suffixes: "swiglu.w_2"
                   layers: [0,1,2,3,4,5,6,7,8,9,10,11]
                 - component_name: ov_circuit
+                  data_type: "weights"
                   layer_suffixes:
                     output_layer: "attention.o_proj"
                     value_layer: "attention.v_proj"
                   layers: [0,1,2,3,4,5,6,7,8,9,10,11]
             - metric_name: norm
               data_split: "train"
+              norm_type: "nuclear"
               components:
                 - component_name: simple
+                  data_type: "weights"
                   layer_suffixes: "swiglu.w_2"
                   layers: [0,1,2,3,4,5,6,7,8,9,10,11]
 
@@ -70,6 +74,20 @@ class LearningDynamicsConfig:
                 NormConfig(metric_name="norm", data_split="train", ...)
             ]
         )
+
+        Also note that we specify for which steps we want to compute the metrics for. Either
+        a list of steps can be specified, or a range of steps can be specified. If a range is
+        specified, we will compute the metrics for all steps in the range (including the end-step).
+
+        Example yaml file:
+        steps:
+          start: 0
+          end: 100
+          step: 50
+
+        This will be converted to the following config object:
+        LearningDynamicsConfig(steps=[0,50,100])
+
         """
         # Convert metric dictionaries to proper config objects
         if isinstance(self.metrics, list):
@@ -94,7 +112,12 @@ class LearningDynamicsConfig:
 
         if isinstance(self.steps, dict):
             self.steps = list(
-                range(self.steps["start"], self.steps["end"], self.steps["step"])
+                range(
+                    self.steps["start"],
+                    self.steps["end"]
+                    + self.steps["step"],  # + step to include end step
+                    self.steps["step"],
+                )
             )
         elif isinstance(self.steps, list):
             self.steps = [int(step) for step in self.steps]

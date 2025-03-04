@@ -21,6 +21,7 @@ from src.utils.initialization import (
 )
 from src.metrics import get_metric, BaseComparativeMetric
 from src.utils.logging import pretty_print_config, pretty_print_component_metrics
+from src.utils.exceptions import InvalidStepError
 
 
 @click.command()
@@ -124,11 +125,20 @@ def main(config_path: str, repo_id: str, branch: str, run_path: str):
         step_metrics = {}
 
         for metric_name, metric in metrics.items():
-            checkpoint_states = get_checkpoint_states(
-                checkpoint_location=checkpoint_location,
-                step=step,
-                data_split=metric.metric_config.data_split,
-            )
+            try:
+                checkpoint_states = get_checkpoint_states(
+                    checkpoint_location=checkpoint_location,
+                    step=step,
+                    data_split=metric.metric_config.data_split,
+                )
+            except InvalidStepError:
+                # NOTE: this can happen if the step is not available for the given data split;
+                # e.g. mostly likely to happen for the last-step of the training run if a metric
+                # was not computed on the training data.
+                logger.warning(
+                    f"Skipping step {step} for metric {metric_name} on split {metric.metric_config.data_split} because the checkpoint does not exist"
+                )
+                continue
 
             # NOTE: metric returns a list of dictionaries which corresponds to metric data
             # for each component specified in the metrics config.
