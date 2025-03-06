@@ -27,4 +27,5 @@ class MonitoringConfig:
         Post-initialization method to convert metric dictionaries to proper config objects. Used
         for loading in metrics from a yaml file where the metrics are specified as dictionaries.
         """
-        self.wandb = WandbConfig(**self.wandb)
+        if isinstance(self.wandb, dict):
+            self.wandb = WandbConfig(**self.wandb)

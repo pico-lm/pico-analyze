@@ -40,7 +40,7 @@ class PWCCAMetric(BaseComparativeMetric):
         ).numpy()
 
         pwcca_metric, _, _ = compute_pwcca(
-            np_source_component_layer_data, np_target_component_layer_data
+            np_source_component_layer_data, np_target_component_layer_data, epsilon=1e-6
         )
 
         return float(pwcca_metric)

@@ -84,7 +84,7 @@ def main(config_path: str, repo_id: str, branch: str, run_path: str):
 
     # Set up the wandb run
     if metrics_config.monitoring.save_to_wandb:
-        wandb_run = initialize_wandb(metrics_config, training_config)
+        wandb_run = initialize_wandb(metrics_config)
 
     ############################################################
     #

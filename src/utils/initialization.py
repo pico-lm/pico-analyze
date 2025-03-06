@@ -94,17 +94,12 @@ def initialize_logging(analysis_dir: str) -> logging.Logger:
     return logger
 
 
-def initialize_wandb(
-    config: LearningDynamicsConfig, training_config: Dict[str, Any]
-) -> wandb.sdk.wandb_run.Run:
+def initialize_wandb(config: LearningDynamicsConfig) -> wandb.sdk.wandb_run.Run:
     """
     Sets up the Wandb run tracker to log out the learning dynamics metrics. Reads in the
     config and training config and initializes a wandb run; if the run already exists, and no
     entity or project is specified in the config, then wandb will print out the metrics
     to the existing run.
-
-    The prefered work-flow is to just either specify the entity and project in the config or
-    not at all and let the analysis save to the original run.
 
     Args:
         config: LearningDynamicsConfig -- the learning dynamics config.
@@ -114,65 +109,26 @@ def initialize_wandb(
         wandb.sdk.wandb_run.Run -- the wandb run.
     """
 
-    assert (
-        config.monitoring.save_to_wandb
-    ), "Wandb is not enabled, so we cannot setup the wandb logger."
-
-    # If there is no entity or project specified in the config, we will save the analysis to the
-    # original run.
-    save_to_original_run = True
+    if not config.monitoring.save_to_wandb:
+        return None
 
     # check if there is a wandb entity and project specified in the config
-    if config.monitoring.wandb.entity is not None:
-        entity = config.monitoring.wandb.entity
+    assert (
+        config.monitoring.wandb.entity is not None
+    ), "Wandb entity must be specified in the config."
+    assert (
+        config.monitoring.wandb.project is not None
+    ), "Wandb project must be specified in the config."
 
-        save_to_original_run = False
-    else:
-        try:
-            entity = training_config["monitoring"]["experiment_tracker"]["wandb_entity"]
-        except KeyError:
-            raise ValueError(
-                "Wandb entity must be specified in the config or training config."
-            )
+    entity = config.monitoring.wandb.entity
+    project = config.monitoring.wandb.project
 
-    if config.monitoring.wandb.project is not None:
-        project = config.monitoring.wandb.project
-
-        save_to_original_run = False
-    else:
-        try:
-            project = training_config["monitoring"]["experiment_tracker"][
-                "wandb_project"
-            ]
-        except KeyError:
-            raise ValueError(
-                "Wandb project must be specified in the config or training config."
-            )
-
-    if save_to_original_run:
-        # get the run_name from the training config
-        run_name = training_config["checkpointing"]["run_name"]
-        # get the run_id from wandb
-        previous_runs = wandb.Api().runs(
-            path=f"{entity}/{project}",
-            filters={"display_name": run_name},
-        )
-        try:
-            _run_id = previous_runs[0].id
-        except ValueError:
-            # NOTE if we can't find a previous run, then this will create a new run with the same
-            # name as the training run, but will show up as a new run in wandb.
-            _run_id = None
-    else:
-        # NOTE: in the output_dir we create a unique analysis name if none is specified
-        run_name = config.analysis_name
-        _run_id = None
+    run_name = config.analysis_name
 
     # initialize the wandb logger
     wandb_run = wandb.init(
         name=run_name,
         project=project,
-        id=_run_id,
         entity=entity,
     )
 

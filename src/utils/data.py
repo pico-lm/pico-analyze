@@ -223,7 +223,7 @@ def _load_checkpoint_states(run_path: str, step: int, data_split: str) -> dict:
     if not os.path.exists(run_path):
         raise ValueError(f"Run path {run_path} does not exist")
 
-    checkpoint_path = os.path.join(run_path, "checkpoint")
+    checkpoint_path = os.path.join(run_path, "checkpoints")
     # ensure that the run_path contains a checkpoint folder
     if not os.path.exists(checkpoint_path):
         raise ValueError(f"Run path {run_path} does not contain a checkpoint folder")
@@ -232,13 +232,18 @@ def _load_checkpoint_states(run_path: str, step: int, data_split: str) -> dict:
 
     # ensure that the step exists
     if not os.path.exists(step_path):
-        raise InvalidStepError(
-            step, f"Step {step} does not exist in run path {run_path}"
-        )
+        raise InvalidStepError(step)
 
     # states to compute learning dynamics are stored in the learning_dynamics folder
     learning_dynamics_path = os.path.join(step_path, "learning_dynamics")
-    return _get_checkpoint_states_dict(learning_dynamics_path, data_split)
+
+    checkpoint_states = _get_checkpoint_states_dict(learning_dynamics_path, data_split)
+    if len(checkpoint_states) == 0:
+        # NOTE: this can happen if a checkpoint folder exists for a given step but no
+        # learning dynamics data was saved for the specified data split.
+        raise InvalidStepError(step)
+
+    return checkpoint_states
 
 
 def _download_checkpoint_states(
@@ -263,9 +268,7 @@ def _download_checkpoint_states(
     )
 
     if step not in learning_dynamics_commits:
-        raise InvalidStepError(
-            step, f"Step {step} does not exist in {repo_id} on branch {branch}"
-        )
+        raise InvalidStepError(step)
 
     commit = learning_dynamics_commits[step]
     checkpoint_dir = snapshot_download(
