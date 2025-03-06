@@ -23,10 +23,10 @@ for full details.
 """
 
 import numpy as np
-from lib.svcca.cca_core import get_cca_similarity
+from lib.svcca.cca_core import robust_cca_similarity
 
 
-def compute_pwcca(acts1, acts2, epsilon=0.0):
+def compute_pwcca(acts1, acts2, epsilon=1e-6):
     """Computes projection weighting for weighting CCA coefficients
 
     Args:
@@ -37,7 +37,7 @@ def compute_pwcca(acts1, acts2, epsilon=0.0):
          Original cca coefficient mean and weighted mean
 
     """
-    sresults = get_cca_similarity(
+    sresults = robust_cca_similarity(
         acts1,
         acts2,
         epsilon=epsilon,
@@ -45,6 +45,7 @@ def compute_pwcca(acts1, acts2, epsilon=0.0):
         compute_coefs=True,
         verbose=False,
     )
+
     if np.sum(sresults["x_idxs"]) <= np.sum(sresults["y_idxs"]):
         dirns = (
             np.dot(
