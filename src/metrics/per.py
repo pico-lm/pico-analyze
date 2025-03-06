@@ -5,6 +5,7 @@ PER metric computes the Proportional Effective Rank (PER) of activations or grad
 from src.metrics._registry import register_metric
 from src.metrics.base import BaseMetric
 from src.config.learning_dynamics import BaseMetricConfig
+from src.config._base import BaseComponentConfig
 
 import torch
 
@@ -30,6 +31,15 @@ class PERMetric(BaseMetric):
                 raise ValueError(
                     f"Invalid component data_type for PERMetric: {component.data_type}"
                 )
+
+    def valid_component_config(self, component_config: BaseComponentConfig) -> bool:
+        """
+        The PER metric is only valid for weights and gradients.
+        """
+        if component_config.data_type not in ["weights", "gradients"]:
+            return False
+
+        return True
 
     def compute_metric(self, component_layer_data: torch.Tensor) -> float:
         """

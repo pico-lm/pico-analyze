@@ -8,6 +8,7 @@ from src.components import get_component
 # Typing
 import torch
 from src.config.learning_dynamics import BaseMetricConfig
+from src.config._base import BaseComponentConfig
 from typing import Dict, Any, List
 
 
@@ -36,7 +37,27 @@ class BaseMetric(ABC):
         self.components = []
         for component_config in self.metric_config.components:
             component = get_component(component_config, run_config)
+
+            # Some metrics can only operate on certain types of components
+            if not component.valid_component_config(component_config):
+                raise ValueError(
+                    f"Invalid component config for metric {self.metric_config.metric_name}"
+                )
+
+            if not self.valid_component_config(component_config):
+                raise ValueError(
+                    f"Invalid metric config for metric {self.metric_config.metric_name}"
+                )
+
             self.components.append(component)
+
+    @abstractmethod
+    def valid_component_config(self, component_config: BaseComponentConfig) -> bool:
+        """
+        Check that the components used in the metric are valid; i.e. that the metric can be
+        computed on the components specified in the config.
+        """
+        raise NotImplementedError
 
     def compute_components(
         self, checkpoint_states: Dict[str, Dict[str, torch.Tensor]]

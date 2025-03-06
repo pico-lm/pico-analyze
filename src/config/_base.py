@@ -24,17 +24,15 @@ class BaseComponentConfig:
             output_layer: "attention.out_proj" # suffix of the layer to compute the metric for
             value_layer: "attention.v_proj" # suffix of the layer to compute the metric for
         layers: [0,1,2,3,4,5,6,7,8,9,10,11] # layers to compute the metric for
+        data_type: "weights" # type of checkpoint data to compute the component for (e.g. "weights", "activations", "gradients")
 
     """
 
-    # Required attributes
     component_name: str  # name of the component
     layer_suffixes: (
         str | Dict[str, str]
     )  # suffixes of the layers to compute the metric for
     layers: List[int]  # layers to compute the metric for
-
-    # Possible additional arguments
     data_type: str = None  # type of checkpoint data to compute the component for (e.g. "weights", "activations", "gradients")
 
 

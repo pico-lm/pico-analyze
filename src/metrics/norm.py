@@ -5,7 +5,7 @@ Norm metrics compute the norm of weights, activations, gradients, etc.
 from src.metrics._registry import register_metric
 from src.metrics.base import BaseMetric
 from src.config.learning_dynamics import BaseMetricConfig
-
+from src.config._base import BaseComponentConfig
 import torch
 
 from functools import partial
@@ -37,6 +37,9 @@ class NormMetric(BaseMetric):
             self.norm_function = partial(torch.norm, p=float("inf"))
         else:
             raise ValueError(f"Invalid norm_type: {self.metric_config.norm_type}")
+
+    def valid_component_config(self, component_config: BaseComponentConfig) -> bool:
+        return True
 
     def compute_metric(self, component_layer_data: torch.Tensor) -> float:
         """

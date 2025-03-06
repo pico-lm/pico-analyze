@@ -4,7 +4,7 @@ This module contains the implementation of the singular values metric.
 
 from src.metrics._registry import register_metric
 from src.metrics.base import BaseMetric
-
+from src.config._base import BaseComponentConfig
 import torch
 
 
@@ -15,6 +15,9 @@ class ConditionNumberMetric(BaseMetric):
     ratio of the largest to smallest singular value of the input. It gives a measure of how
     sensitive the output is to small changes in the input.
     """
+
+    def valid_component_config(self, component_config: BaseComponentConfig) -> bool:
+        return True
 
     def compute_metric(self, component_layer_data: torch.Tensor) -> float:
         """

@@ -5,7 +5,7 @@ sets of activations are between two different checkpoints.
 
 from src.metrics._registry import register_metric
 from src.metrics.base import BaseComparativeMetric
-
+from src.config._base import BaseComponentConfig
 from lib import cka
 
 # Typing imports
@@ -25,6 +25,15 @@ class CKAMetric(BaseComparativeMetric):
     Reference: https://arxiv.org/pdf/1905.00414.pdf
 
     """
+
+    def valid_component_config(self, component_config: BaseComponentConfig) -> bool:
+        """
+        The CKA metric is only valid for activations.
+        """
+        if component_config.data_type not in ["activations"]:
+            return False
+
+        return True
 
     def compute_metric(
         self,

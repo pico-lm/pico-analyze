@@ -124,14 +124,15 @@ class OVComponent(BaseComponent):
 
         # NOTE: We only support activations and weights for the OV circuit component
         if component_config.data_type not in ["activations", "weights"]:
-            raise ValueError(
-                f"Invalid component data_type for OVComponent: {component_config.data_type}"
-            )
+            return False
 
-        assert (
-            "value_layer" in component_config.layer_suffixes
-            and "output_layer" in component_config.layer_suffixes
-        ), "Layer suffixes must contain value_layer and output_layer"
+        if (
+            "value_layer" not in component_config.layer_suffixes
+            or "output_layer" not in component_config.layer_suffixes
+        ):
+            return False
+
+        return True
 
     def __call__(
         self,
@@ -151,8 +152,6 @@ class OVComponent(BaseComponent):
             Dict[str, torch.Tensor] -- the OV circuit component; mapping layer names to OV circuit
                 activations.
         """
-
-        super().__call__(checkpoint_states, component_config)
 
         layer_suffixes = component_config.layer_suffixes
 

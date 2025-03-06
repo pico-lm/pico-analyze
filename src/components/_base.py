@@ -20,6 +20,10 @@ class BaseComponent(ABC):
     2. Compound components: these are components that are made up of multiple single components.
         For example, the OV-Circuit is a compound component that is made up of the value and
         output projection layers.
+
+
+    Components are functional objects that are used to generate a component from a given checkpoint
+    state and a component configuration.
     """
 
     def __init__(self, training_config: Dict[str, Any]):
@@ -47,18 +51,21 @@ class BaseComponent(ABC):
 
         return os.path.commonprefix(_activation_layernames)
 
-    def check_component_config(self, component_config: BaseComponentConfig) -> None:
+    @abstractmethod
+    def valid_component_config(self, component_config: BaseComponentConfig) -> bool:
         """
         Check the component config; components should specify the required keys in the component
-        config by overriding this method. NOTE: by default, all components require a data type;
-        i.e. whether the component is an activation, weight, or gradient.
+        config by overriding this method. This function should be called by the metric to ensure
+        that the component config is valid.
 
         Args:
             component_config: BaseComponentConfig -- the component configuration.
+
+        Returns:
+            bool -- whether the component config is valid.
         """
-        assert (
-            component_config.data_type is not None
-        ), "Data type must be specified in component config"
+
+        raise NotImplementedError
 
     @abstractmethod
     def __call__(
@@ -84,5 +91,4 @@ class BaseComponent(ABC):
                     "model.1.component_name": torch.Tensor,
                 }
         """
-
-        self.check_component_config(component_config)
+        raise NotImplementedError

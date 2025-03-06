@@ -4,6 +4,7 @@ Hoyer's sparsity metric is a measure of the sparsity of a matrix.
 
 from src.metrics._registry import register_metric
 from src.metrics.base import BaseMetric
+from src.config._base import BaseComponentConfig
 
 import torch
 import math
@@ -18,6 +19,9 @@ class HoyerMetric(BaseMetric):
 
     where P is the parameter matrix, ||.||_1 is the L1 norm, and ||.||_2 is the L2 norm.
     """
+
+    def valid_component_config(self, component_config: BaseComponentConfig) -> bool:
+        return True
 
     def compute_metric(self, component_layer_data: torch.Tensor) -> float:
         """

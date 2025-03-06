@@ -6,6 +6,7 @@ measure the sparsity of a matrix.
 
 from src.metrics._registry import register_metric
 from src.metrics.base import BaseMetric
+from src.config._base import BaseComponentConfig
 
 import torch
 
@@ -22,6 +23,9 @@ class GiniMetric(BaseMetric):
 
     where x_i is the i-th element of the data, and x is the sum of all the elements in the data.
     """
+
+    def valid_component_config(self, component_config: BaseComponentConfig) -> bool:
+        return True
 
     def compute_metric(self, component_layer_data: torch.Tensor) -> float:
         """

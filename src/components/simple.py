@@ -21,6 +21,16 @@ class SimpleComponent(BaseComponent):
     a single component.
     """
 
+    def valid_component_config(self, component_config: BaseComponentConfig) -> bool:
+        """
+        Check the component config; components should specify the required keys in the component
+        config by overriding this method.
+        """
+        if component_config.data_type not in ["activations", "weights", "gradients"]:
+            return False
+
+        return True
+
     def __call__(
         self,
         checkpoint_states: Dict[str, Dict[str, torch.Tensor]],
