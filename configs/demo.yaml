@@ -1,4 +1,4 @@
-analysis_name: "demo-analysis-3"
+analysis_name: "pico-decoder-demo-1-analysis"
 
 metrics: 
   - metric_name: cka
@@ -33,23 +33,25 @@ metrics:
     data_split: "val"
     components: 
       - component_name: simple
-        data_type: "activations"
-        layer_suffixes: "attention.o_proj"
+        data_type: "weights"
+        layer_suffixes: "swiglu.w_2"
         layers: [0,1,2,3,4,5,6,7,8,9,10,11]
   - metric_name: hoyer
     data_split: "val"
     components: 
       - component_name: simple
-        data_type: "activations"
-        layer_suffixes: "attention.v_proj"
+        data_type: "weights"
+        layer_suffixes: "swiglu.w_2"
         layers: [0,1,2,3,4,5,6,7,8,9,10,11]
   - metric_name: pwcca
     target_checkpoint: 50
     data_split: "train"
     components: 
-      - component_name: simple
-        data_type: "gradients"
-        layer_suffixes: "attention.v_proj"
+      - component_name: ov_circuit
+        data_type: "activations"
+        layer_suffixes: 
+          output_layer: "attention.o_proj"
+          value_layer: "attention.v_proj"
         layers: [0,1,2,3,4,5,6,7,8,9,10,11]
   - metric_name: norm
     data_split: "val"
@@ -74,4 +76,4 @@ monitoring:
   save_to_wandb: true
   wandb:
     entity: "pico-lm"
-    project: "pico-analysis"
+    project: "pico-demo"
