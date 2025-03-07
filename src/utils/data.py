@@ -188,19 +188,17 @@ def _get_checkpoint_states_dict(
         states: Dictionary containing the loaded checkpoint states
     """
     # load the data
-    states = {}
-    for state_type in ["activations", "weights", "gradients"]:
-        file_path = os.path.join(
-            learning_dynamics_path, f"{data_split}_{state_type}.pt"
-        )
+    checkpoint_states = {}
+    for data_type in ["activations", "weights", "gradients"]:
+        file_path = os.path.join(learning_dynamics_path, f"{data_split}_{data_type}.pt")
         if os.path.exists(file_path):
-            states[state_type] = torch.load(file_path)
+            checkpoint_states[data_type] = torch.load(file_path)
 
     dataset_path = os.path.join(learning_dynamics_path, f"{data_split}_data")
     if os.path.exists(dataset_path):
-        states["dataset"] = load_from_disk(dataset_path)
+        checkpoint_states["dataset"] = load_from_disk(dataset_path)
 
-    return states
+    return checkpoint_states
 
 
 def _load_checkpoint_states(run_path: str, step: int, data_split: str) -> dict:
