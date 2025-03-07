@@ -52,7 +52,7 @@ class BaseComponent(ABC):
         return os.path.commonprefix(_activation_layernames)
 
     @abstractmethod
-    def valid_component_config(self, component_config: BaseComponentConfig) -> bool:
+    def validate_component(self, component_config: BaseComponentConfig) -> None:
         """
         Check the component config; components should specify the required keys in the component
         config by overriding this method. This function should be called by the metric to ensure
@@ -64,7 +64,6 @@ class BaseComponent(ABC):
         Returns:
             bool -- whether the component config is valid.
         """
-
         raise NotImplementedError
 
     @abstractmethod

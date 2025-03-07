@@ -38,8 +38,8 @@ class NormMetric(BaseMetric):
         else:
             raise ValueError(f"Invalid norm_type: {self.metric_config.norm_type}")
 
-    def valid_component_config(self, component_config: BaseComponentConfig) -> bool:
-        return True
+    # NOTE: Any component is valid for the norm metric.
+    def validate_component(self, component_config: BaseComponentConfig) -> None: ...
 
     def compute_metric(self, component_layer_data: torch.Tensor) -> float:
         """

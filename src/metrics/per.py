@@ -6,7 +6,7 @@ from src.metrics._registry import register_metric
 from src.metrics.base import BaseMetric
 from src.config.learning_dynamics import BaseMetricConfig
 from src.config._base import BaseComponentConfig
-
+from src.utils.exceptions import InvalidComponentError
 import torch
 
 
@@ -32,14 +32,15 @@ class PERMetric(BaseMetric):
                     f"Invalid component data_type for PERMetric: {component.data_type}"
                 )
 
-    def valid_component_config(self, component_config: BaseComponentConfig) -> bool:
+    def validate_component(self, component_config: BaseComponentConfig) -> None:
         """
         The PER metric is only valid for weights and gradients.
         """
         if component_config.data_type not in ["weights", "gradients"]:
-            return False
-
-        return True
+            raise InvalidComponentError(
+                f"PER metric only supports weights and gradients, not {component_config.data_type} "
+                f"(component: {component_config.component_name})."
+            )
 
     def compute_metric(self, component_layer_data: torch.Tensor) -> float:
         """

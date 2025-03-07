@@ -5,6 +5,7 @@ Base class for all metrics.
 from abc import ABC, abstractmethod
 from src.components import get_component
 
+
 # Typing
 import torch
 from src.config.learning_dynamics import BaseMetricConfig
@@ -38,24 +39,23 @@ class BaseMetric(ABC):
         for component_config in self.metric_config.components:
             component = get_component(component_config, run_config)
 
-            # Some metrics can only operate on certain types of components
-            if not component.valid_component_config(component_config):
-                raise ValueError(
-                    f"Invalid component config for metric {self.metric_config.metric_name}"
-                )
+            # NOTE: We verify that the component config is valid for the component by calling the
+            # component's validate_component method and that the component is compatible with the
+            # metric by calling the metric's validate_component method.
 
-            if not self.valid_component_config(component_config):
-                raise ValueError(
-                    f"Invalid metric config for metric {self.metric_config.metric_name}"
-                )
+            # For instance, some metrics only make sense for weights or activations, so we check
+            # that the component config specifies a valid data_type.
+            component.validate_component(component_config)
+            self.validate_component(component_config)
 
             self.components.append(component)
 
     @abstractmethod
-    def valid_component_config(self, component_config: BaseComponentConfig) -> bool:
+    def validate_component(self, component_config: BaseComponentConfig) -> None:
         """
         Check that the components used in the metric are valid; i.e. that the metric can be
-        computed on the components specified in the config.
+        computed on the components specified in the config. Should raise an InvalidComponentError
+        if the component is not valid.
         """
         raise NotImplementedError
 

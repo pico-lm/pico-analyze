@@ -24,8 +24,8 @@ class GiniMetric(BaseMetric):
     where x_i is the i-th element of the data, and x is the sum of all the elements in the data.
     """
 
-    def valid_component_config(self, component_config: BaseComponentConfig) -> bool:
-        return True
+    # NOTE: Any component is valid for the Gini metric.
+    def validate_component(self, component_config: BaseComponentConfig) -> None: ...
 
     def compute_metric(self, component_layer_data: torch.Tensor) -> float:
         """

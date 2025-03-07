@@ -1,4 +1,4 @@
-analysis_name: "pico-decoder-demo-1-analysis"
+analysis_name: "pico-decoder-demo-2-analysis"
 
 metrics: 
   - metric_name: cka
@@ -12,7 +12,7 @@ metrics:
           value_layer: "attention.v_proj"
         layers: [0,1,2,3,4,5,6,7,8,9,10,11]
       - component_name: simple
-        data_type: "weights"
+        data_type: "activations"
         layer_suffixes: "swiglu.w_2"
         layers: [0,1,2,3,4,5,6,7,8,9,10,11]
   - metric_name: per
@@ -73,7 +73,7 @@ steps:
 monitoring: 
   output_dir: "analysis_results"
 
-  save_to_wandb: true
+  save_to_wandb: false
   wandb:
     entity: "pico-lm"
     project: "pico-demo"

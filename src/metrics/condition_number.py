@@ -16,8 +16,8 @@ class ConditionNumberMetric(BaseMetric):
     sensitive the output is to small changes in the input.
     """
 
-    def valid_component_config(self, component_config: BaseComponentConfig) -> bool:
-        return True
+    # NOTE: Any component is valid for the condition number metric.
+    def validate_component(self, component_config: BaseComponentConfig) -> None: ...
 
     def compute_metric(self, component_layer_data: torch.Tensor) -> float:
         """

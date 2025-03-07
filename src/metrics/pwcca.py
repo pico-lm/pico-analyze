@@ -7,6 +7,7 @@ from src.metrics._registry import register_metric
 from src.metrics.base import BaseComparativeMetric
 from lib.svcca.pwcca import compute_pwcca
 from src.config._base import BaseComponentConfig
+from src.utils.exceptions import InvalidComponentError
 
 # Typing imports
 import torch
@@ -23,14 +24,15 @@ class PWCCAMetric(BaseComparativeMetric):
     Reference: https://arxiv.org/abs/1806.05759
     """
 
-    def valid_component_config(self, component_config: BaseComponentConfig) -> bool:
+    def validate_component(self, component_config: BaseComponentConfig) -> bool:
         """
         The PWCCA metric is only valid for activations.
         """
         if component_config.data_type not in ["activations"]:
-            return False
-
-        return True
+            raise InvalidComponentError(
+                f"PWCCA metric only supports activations, not {component_config.data_type} "
+                f"(component: {component_config.component_name})."
+            )
 
     def compute_metric(
         self,

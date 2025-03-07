@@ -7,9 +7,8 @@ import logging
 import yaml
 import wandb
 from datetime import datetime
-from dataclasses import fields, is_dataclass
 
-from src.utils.exceptions import InvalidLocationError
+from src.utils.exceptions import InvalidRunLocationError
 from src.config.learning_dynamics import LearningDynamicsConfig
 
 # typing imports
@@ -159,12 +158,12 @@ class CheckpointLocation:
         Need to ensure that either the repo_id and branch are specified or the run_path is specified.
         """
         if self.run_path is not None:
-            if os.path.exists(self.run_path):
-                InvalidLocationError(self.run_path)
+            if not os.path.exists(self.run_path):
+                raise InvalidRunLocationError()
             self.is_remote = False
         else:
             if self.repo_id is None or self.branch is None:
-                raise InvalidLocationError(self.run_path)
+                raise InvalidRunLocationError()
             self.is_remote = True
 
 
@@ -173,26 +172,6 @@ class CheckpointLocation:
 # Configuration Setup
 #
 ####################
-
-
-def _apply_config_overrides(config, overrides: dict):
-    """Recursively apply configuration overrides to a dataclass config object.
-
-    Args:
-        config: Base configuration object (must be a dataclass)
-        overrides: Dictionary of override values matching config structure
-
-    Returns:
-        Modified config object with overrides to the config.
-    """
-    for field in fields(config):
-        field_value = getattr(config, field.name)
-        if is_dataclass(field_value):
-            _apply_config_overrides(field_value, overrides.get(field.name, {}))
-        else:
-            if field.name in overrides:
-                setattr(config, field.name, overrides[field.name])
-    return config
 
 
 def initialize_config(config_path: str) -> dict:

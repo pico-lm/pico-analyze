@@ -20,8 +20,8 @@ class HoyerMetric(BaseMetric):
     where P is the parameter matrix, ||.||_1 is the L1 norm, and ||.||_2 is the L2 norm.
     """
 
-    def valid_component_config(self, component_config: BaseComponentConfig) -> bool:
-        return True
+    # NOTE: Any component is valid for the Hoyer metric.
+    def validate_component(self, component_config: BaseComponentConfig) -> None: ...
 
     def compute_metric(self, component_layer_data: torch.Tensor) -> float:
         """

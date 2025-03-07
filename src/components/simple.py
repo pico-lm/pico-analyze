@@ -6,6 +6,7 @@ from the stored out checkpoint data without much additional computation.
 
 from src.components._base import BaseComponent
 from src.components._registry import register_component
+from src.utils.exceptions import InvalidComponentError
 
 # typing imports
 import torch
@@ -21,15 +22,15 @@ class SimpleComponent(BaseComponent):
     a single component.
     """
 
-    def valid_component_config(self, component_config: BaseComponentConfig) -> bool:
+    def validate_component(self, component_config: BaseComponentConfig) -> None:
         """
         Check the component config; components should specify the required keys in the component
         config by overriding this method.
         """
         if component_config.data_type not in ["activations", "weights", "gradients"]:
-            return False
-
-        return True
+            raise InvalidComponentError(
+                f"Simple component only supports activations, weights, or gradients, not {component_config.data_type}."
+            )
 
     def __call__(
         self,
@@ -47,8 +48,6 @@ class SimpleComponent(BaseComponent):
         Returns:
             A dictionary mapping layer names to MLP activations.
         """
-
-        super().__call__(checkpoint_states, component_config)
 
         checkpoint_layer_component = {}
 

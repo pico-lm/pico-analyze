@@ -5,6 +5,7 @@ OV circuit is a compound component that is composed of the OV circuit layers.
 
 from src.components._base import BaseComponent
 from src.components._registry import register_component
+from src.utils.exceptions import InvalidComponentError
 
 from functools import lru_cache
 
@@ -115,24 +116,24 @@ class OVComponent(BaseComponent):
 
         return layer_ov_weights
 
-    def check_component_config(self, component_config: BaseComponentConfig) -> None:
+    def validate_component(self, component_config: BaseComponentConfig) -> None:
         """
         Check the component config; components should specify the required keys in the component
         config by overriding this method.
         """
-        super().check_component_config(component_config)
-
         # NOTE: We only support activations and weights for the OV circuit component
         if component_config.data_type not in ["activations", "weights"]:
-            return False
+            raise InvalidComponentError(
+                f"OV circuit component only supports activations and weights, not {component_config.data_type}."
+            )
 
         if (
             "value_layer" not in component_config.layer_suffixes
             or "output_layer" not in component_config.layer_suffixes
         ):
-            return False
-
-        return True
+            raise InvalidComponentError(
+                "OV circuit component requires value and output layer suffixes."
+            )
 
     def __call__(
         self,

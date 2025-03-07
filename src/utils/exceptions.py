@@ -10,25 +10,21 @@ class InvalidStepError(Exception):
     Exception class that is raised when a requested step is not available in the repository.
     """
 
-    def __init__(self, step: int, message: Optional[str] = None):
-        self.step = step
-
+    def __init__(self, step: Optional[int] = None, message: Optional[str] = None):
         if message is None:
-            self.message = f"Step {step} is not a valid checkpoint step."
+            self.message = f"Step {step if step is not None else ''} is not a valid checkpoint step."
         else:
             self.message = message
 
         super().__init__(self.message)
 
 
-class InvalidLocationError(Exception):
+class InvalidRunLocationError(Exception):
     """
-    Exception class that is raised when a requested location is not valid.
+    Exception class that is raised when a requested location for a model run is not valid.
     """
 
-    def __init__(self, location: str, message: Optional[str] = None):
-        self.location = location
-
+    def __init__(self, message: Optional[str] = None):
         if message is None:
             self.message = """
             Location must be either a remote repository or a local path.
@@ -39,6 +35,21 @@ class InvalidLocationError(Exception):
             To specify a local path, provide the run_path:
                python run analyze [...] --run_path <run_path>
             """
+        else:
+            self.message = message
+
+        super().__init__(self.message)
+
+
+class InvalidComponentError(Exception):
+    """
+    Exception class that is raised when a requested component is not valid because it is either
+    incompatible with the metric or the component config is invalid.
+    """
+
+    def __init__(self, message: Optional[str] = None):
+        if message is None:
+            self.message = "Component is not a valid component."
         else:
             self.message = message
 
