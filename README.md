@@ -1,4 +1,4 @@
-# Pico Analysis
+# Pico Analyze
 
 Framework for analyzing learning dynamics of models trained using Pico. This package provides tools and metrics for understanding how models evolve during training.
 
