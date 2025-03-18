@@ -64,7 +64,7 @@
    - **Which metrics** (CKA, Gini, etc.)
 
    ```yaml
-   # analysis_config.yaml
+   # configs/my_analysis_config.yaml
 
    analysis_name: "my_analysis"
    steps:
@@ -91,12 +91,12 @@
 3. **Run the Analysis**
    ```bash
    poetry run analyze \
-       --config_path analysis_config.yaml \
+       --config_path configs/my_analysis_config.yaml \
        --repo_id pico-lm/pico-decoder-small \
-       --branch step-checkpoints
+       --branch pico-decoder-small-1
    ```
-   - **`--repo_id`**: The Hugging Face repository hosting your checkpoints
-   - **`--branch`**: The repo branch or “revision” (e.g., `main`, `step-1000`)
+   - **`--repo_id`**: The Hugging Face repository hosting your checkpoints (e.g., `pico-lm/pico-decoder-small`)
+   - **`--branch`**: The repo branch or “revision” (e.g., `pico-decoder-small-1`)
    - Or use `--run_path` to analyze local checkpoints
 
 4. **Review Output**  
