@@ -6,22 +6,23 @@ Given a metrics config and a trained model, this script will load in the model a
 checkpoints and computed the specified learning dynamics metrics.
 """
 
-import click
-import os
 import json
+import os
 from dataclasses import asdict
 
+import click
+
+from src.metrics import BaseComparativeMetric, get_metric
 from src.utils.data import get_checkpoint_states, get_training_config
+from src.utils.exceptions import InvalidStepError
 from src.utils.initialization import (
-    initialize_config,
     CheckpointLocation,
+    initialize_config,
+    initialize_logging,
     initialize_output_dir,
     initialize_wandb,
-    initialize_logging,
 )
-from src.metrics import get_metric, BaseComparativeMetric
-from src.utils.logging import pretty_print_config, pretty_print_component_metrics
-from src.utils.exceptions import InvalidStepError
+from src.utils.logging import pretty_print_component_metrics, pretty_print_config
 
 
 @click.command()

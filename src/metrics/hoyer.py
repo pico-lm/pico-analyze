@@ -2,12 +2,13 @@
 Hoyer's sparsity metric is a measure of the sparsity of a matrix.
 """
 
-from src.metrics._registry import register_metric
-from src.metrics.base import BaseMetric
-from src.config._base import BaseComponentConfig
+import math
 
 import torch
-import math
+
+from src.config._base import BaseComponentConfig
+from src.metrics._registry import register_metric
+from src.metrics.base import BaseMetric
 
 
 @register_metric("hoyer")

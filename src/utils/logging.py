@@ -2,11 +2,12 @@
 Miscellaneous logging utilities.
 """
 
+import logging
+from io import StringIO
+
+import yaml
 from rich.console import Console
 from rich.panel import Panel
-from io import StringIO
-import yaml
-import logging
 
 
 def pretty_print_config(logger: logging.Logger, title: str, config: dict) -> None:

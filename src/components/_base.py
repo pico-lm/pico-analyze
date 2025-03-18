@@ -2,12 +2,13 @@
 Base class for components.
 """
 
-from abc import ABC, abstractmethod
 import os
+from abc import ABC, abstractmethod
+from typing import Any, Dict
 
 # typing imports
 import torch
-from typing import Dict, Any
+
 from src.config._base import BaseComponentConfig
 
 

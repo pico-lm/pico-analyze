@@ -2,17 +2,18 @@
 Initialize configuration objects from a YAML file.
 """
 
-import os
 import logging
-import yaml
-import wandb
+import os
 from datetime import datetime
 
-from src.utils.exceptions import InvalidRunLocationError
-from src.config.learning_dynamics import LearningDynamicsConfig
-
 # typing imports
-from typing import Dict, Any
+from typing import Any, Dict
+
+import wandb
+import yaml
+
+from src.config.learning_dynamics import LearningDynamicsConfig
+from src.utils.exceptions import InvalidRunLocationError
 
 ####################
 #

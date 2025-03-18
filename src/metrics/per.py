@@ -2,12 +2,13 @@
 PER metric computes the Proportional Effective Rank (PER) of activations or gradients.
 """
 
+import torch
+
+from src.config._base import BaseComponentConfig
+from src.config.learning_dynamics import BaseMetricConfig
 from src.metrics._registry import register_metric
 from src.metrics.base import BaseMetric
-from src.config.learning_dynamics import BaseMetricConfig
-from src.config._base import BaseComponentConfig
 from src.utils.exceptions import InvalidComponentError
-import torch
 
 
 @register_metric("per")

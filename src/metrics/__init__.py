@@ -1,28 +1,26 @@
 # ruff: noqa: F401
 
 # NOTE: Importing these metrics automatically adds them to the METRIC_REGISTRY
-from .base import BaseMetric, BaseComparativeMetric
+from typing import Any, Dict
 
-# Implemented Metrics
+# Typing
+from src.config.learning_dynamics import BaseMetricConfig
 
-# Base Metrics
-from .norm import NormMetric
-from .per import PERMetric
+# Registry
+from ._registry import METRIC_REGISTRY
+from .base import BaseComparativeMetric, BaseMetric
+
+# Comparative Metrics (between two checkpoints)
+from .cka import CKAMetric
 from .condition_number import ConditionNumberMetric
 from .gini import GiniMetric
 from .hoyer import HoyerMetric
 
-
-# Comparative Metrics (between two checkpoints)
-from .cka import CKAMetric
+# Implemented Metrics
+# Base Metrics
+from .norm import NormMetric
+from .per import PERMetric
 from .pwcca import PWCCAMetric
-
-# Registry
-from ._registry import METRIC_REGISTRY
-
-# Typing
-from src.config.learning_dynamics import BaseMetricConfig
-from typing import Dict, Any
 
 
 def get_metric(

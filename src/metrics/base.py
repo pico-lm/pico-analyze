@@ -3,14 +3,14 @@ Base class for all metrics.
 """
 
 from abc import ABC, abstractmethod
-from src.components import get_component
-
+from typing import Any, Dict, List
 
 # Typing
 import torch
-from src.config.learning_dynamics import BaseMetricConfig
+
+from src.components import get_component
 from src.config._base import BaseComponentConfig
-from typing import Dict, Any, List
+from src.config.learning_dynamics import BaseMetricConfig
 
 
 class BaseMetric(ABC):

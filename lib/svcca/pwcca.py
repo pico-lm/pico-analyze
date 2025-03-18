@@ -23,6 +23,7 @@ for full details.
 """
 
 import numpy as np
+
 from lib.svcca.cca_core import robust_cca_similarity
 
 

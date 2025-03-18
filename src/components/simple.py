@@ -4,15 +4,15 @@ a single component. In other words, simple components are those that can just be
 from the stored out checkpoint data without much additional computation.
 """
 
-from src.components._base import BaseComponent
-from src.components._registry import register_component
-from src.utils.exceptions import InvalidComponentError
+from typing import Any, Dict
 
 # typing imports
 import torch
-from typing import Dict, Any
 
+from src.components._base import BaseComponent
+from src.components._registry import register_component
 from src.config._base import BaseComponentConfig
+from src.utils.exceptions import InvalidComponentError
 
 
 @register_component("simple")

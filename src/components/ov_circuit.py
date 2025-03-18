@@ -3,16 +3,16 @@ Compound component are those that are composed of multiple-layers; for example, 
 OV circuit is a compound component that is composed of the OV circuit layers.
 """
 
-from src.components._base import BaseComponent
-from src.components._registry import register_component
-from src.utils.exceptions import InvalidComponentError
-
 from functools import lru_cache
+from typing import Any, Dict
 
 # typing imports
 import torch
-from typing import Dict, Any
+
+from src.components._base import BaseComponent
+from src.components._registry import register_component
 from src.config._base import BaseComponentConfig
+from src.utils.exceptions import InvalidComponentError
 
 
 @register_component("ov_circuit")
