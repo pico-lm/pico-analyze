@@ -9,7 +9,7 @@ from typing import Any, Dict
 # typing imports
 import torch
 
-from src.config._base import BaseComponentConfig
+from src.config.base import BaseComponentConfig
 
 
 class BaseComponent(ABC):

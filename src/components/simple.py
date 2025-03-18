@@ -9,9 +9,9 @@ from typing import Any, Dict
 # typing imports
 import torch
 
-from src.components._base import BaseComponent
 from src.components._registry import register_component
-from src.config._base import BaseComponentConfig
+from src.components.base import BaseComponent
+from src.config.base import BaseComponentConfig
 from src.utils.exceptions import InvalidComponentError
 
 

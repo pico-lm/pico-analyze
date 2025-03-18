@@ -7,11 +7,11 @@ Configuration classes for learning dynamics analysis.
 from dataclasses import dataclass, field
 from typing import List
 
-from src.config._base import (
+from src.config._registry import METRIC_CONFIG_REGISTRY
+from src.config.base import (
     BaseComparativeMetricConfig,
     BaseMetricConfig,
 )
-from src.config._registry import METRIC_CONFIG_REGISTRY
 from src.config.metrics import *
 from src.config.monitoring import MonitoringConfig
 

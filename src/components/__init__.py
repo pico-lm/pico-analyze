@@ -3,15 +3,15 @@
 # NOTE: Importing these components automatically adds them to the COMPONENT_REGISTRY
 from typing import Any, Dict
 
-from src.components._base import BaseComponent
 from src.components._registry import COMPONENT_REGISTRY
+from src.components.base import BaseComponent
 from src.components.ov_circuit import OVComponent
 
 # registered components
 from src.components.simple import SimpleComponent
 
 # typing imports
-from src.config._base import BaseComponentConfig
+from src.config.base import BaseComponentConfig
 
 COMPONENT_CACHE = {}
 

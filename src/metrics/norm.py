@@ -6,7 +6,7 @@ from functools import partial
 
 import torch
 
-from src.config._base import BaseComponentConfig
+from src.config.base import BaseComponentConfig
 from src.config.learning_dynamics import BaseMetricConfig
 from src.metrics._registry import register_metric
 from src.metrics.base import BaseMetric

@@ -7,7 +7,7 @@ how similar two sets of activations are between two different checkpoints.
 import torch
 
 from lib.svcca.pwcca import compute_pwcca
-from src.config._base import BaseComponentConfig
+from src.config.base import BaseComponentConfig
 from src.metrics._registry import register_metric
 from src.metrics.base import BaseComparativeMetric
 from src.utils.exceptions import InvalidComponentError

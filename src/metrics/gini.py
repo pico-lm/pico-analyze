@@ -6,7 +6,7 @@ measure the sparsity of a matrix.
 
 import torch
 
-from src.config._base import BaseComponentConfig
+from src.config.base import BaseComponentConfig
 from src.metrics._registry import register_metric
 from src.metrics.base import BaseMetric
 

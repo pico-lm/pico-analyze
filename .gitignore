@@ -175,3 +175,5 @@ cython_debug/
 
 # ignoring wandb logs
 wandb/
+
+analysis_results/

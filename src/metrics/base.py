@@ -9,7 +9,7 @@ from typing import Any, Dict, List
 import torch
 
 from src.components import get_component
-from src.config._base import BaseComponentConfig
+from src.config.base import BaseComponentConfig
 from src.config.learning_dynamics import BaseMetricConfig
 
 

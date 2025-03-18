@@ -10,8 +10,8 @@ Configurations for metrics. Recall there are two types of metrics:
 
 from dataclasses import dataclass
 
-from src.config._base import BaseComparativeMetricConfig, BaseMetricConfig
 from src.config._registry import register_metric_config
+from src.config.base import BaseComparativeMetricConfig, BaseMetricConfig
 
 # -----------------
 # Single Checkpoint (Base) Metrics

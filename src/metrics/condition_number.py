@@ -4,7 +4,7 @@ This module contains the implementation of the singular values metric.
 
 import torch
 
-from src.config._base import BaseComponentConfig
+from src.config.base import BaseComponentConfig
 from src.metrics._registry import register_metric
 from src.metrics.base import BaseMetric
 
