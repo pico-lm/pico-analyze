@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "pico-analysis"
-version = "0.1.0"
-description = "Framework for studying learning dynamics of Pico models."
-authors = ["Richard Diehl Martinez <richarddiehl@gmail.com>"]
+name = "pico-analyze"
+version = "1.0.0"
+description = "A companion toolkit to pico-train for quantifying, comparing, and visualizing how language models evolve during training."
+authors = ["Richard Diehl Martinez <richard@picolm.io>"]
 license = "Apache 2.0"
 readme = "README.md"
 packages = [{include = "src"}]
@@ -12,16 +12,16 @@ python = "^3.10"
 huggingface-hub = {extras = ["cli"], version = "^0.25.1"}
 torch = "^2.5.1"
 datasets = "^3.2.0"
-lightning = "^2.5.0.post0"
 rich = "^13.9.4"
+pre-commit = "^4.2.0"
+wandb = "^0.19.5"
 
 [tool.poetry.scripts]
 analyze = "scripts.analyze:main"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.5"
-wandb = "^0.19.5"
-pre-commit = "^4.1.0"
+jupyter = "^1.1.1"
 
 [build-system]
 requires = ["poetry-core"]
