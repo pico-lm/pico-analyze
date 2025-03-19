@@ -1,12 +1,11 @@
 """
-Compound component are those that are composed of multiple-layers; for example, the
-OV circuit is a compound component that is composed of the OV circuit layers.
+Output-Value Circuit component: a compound component that is composed of the value and output
+projections of the attention modules of a transformer model.
 """
 
 from functools import lru_cache
 from typing import Any, Dict, Tuple
 
-# typing imports
 import torch
 
 from src.components._registry import register_component
@@ -218,8 +217,7 @@ class OVComponent(BaseComponent):
 
     def validate_component(self, component_config: BaseComponentConfig) -> None:
         """
-        Check the component config; components should specify the required keys in the component
-        config by overriding this method.
+        OV circuit components require value and output layer suffixes to be specified.
         """
         if (
             "value_layer" not in component_config.layer_suffixes

@@ -3,7 +3,6 @@ CKA (Centered Kernel Alignment) is a comparative metric for comparing how simila
 sets of activations are between two different checkpoints.
 """
 
-# Typing imports
 import torch
 
 from lib import cka
@@ -44,6 +43,13 @@ class CKAMetric(BaseComparativeMetric):
     ) -> float:
         """
         Computes the CKA between two sets of source and target component layer activations.
+
+        Args:
+            source_component_layer_data: Tensor containing the source data to analyze
+            target_component_layer_data: Tensor containing the target data to analyze
+
+        Returns:
+            float: The computed CKA
         """
 
         # NOTE: The CKA implementation expects float32 numpy darrays

@@ -6,7 +6,6 @@ from the stored out checkpoint data without much additional computation.
 
 from typing import Any, Dict
 
-# typing imports
 import torch
 
 from src.components._registry import register_component
@@ -24,8 +23,7 @@ class SimpleComponent(BaseComponent):
 
     def validate_component(self, component_config: BaseComponentConfig) -> None:
         """
-        Check the component config; components should specify the required keys in the component
-        config by overriding this method.
+        Simple components can be any of the data types (activations, weights, or gradients).
         """
         if component_config.data_type not in ["activations", "weights", "gradients"]:
             raise InvalidComponentError(

@@ -11,8 +11,6 @@ from src.config.learning_dynamics import BaseMetricConfig
 from src.metrics._registry import register_metric
 from src.metrics.base import BaseMetric
 
-# Typing imports
-
 
 @register_metric("norm")
 class NormMetric(BaseMetric):
@@ -22,12 +20,6 @@ class NormMetric(BaseMetric):
 
     def __init__(self, metric_config: BaseMetricConfig, *args):
         super().__init__(metric_config, *args)
-
-        for component in self.metric_config.components:
-            if component.data_type not in ["weights", "activations", "gradients"]:
-                raise ValueError(
-                    f"Invalid component data_type for NormMetric: {component.data_type}"
-                )
 
         # NOTE: We use the torch.norm function to compute the norm of the data.
         if self.metric_config.norm_type == "frobenius":
@@ -45,5 +37,11 @@ class NormMetric(BaseMetric):
     def compute_metric(self, component_layer_data: torch.Tensor) -> float:
         """
         Computes the norm of the given component data.
+
+        Args:
+            component_layer_data: The component data to compute the norm of.
+
+        Returns:
+            The norm of the component data.
         """
         return self.norm_function(component_layer_data).item()

@@ -5,7 +5,6 @@ Base class for all metrics.
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List
 
-# Typing
 import torch
 
 from src.components import get_component
@@ -56,6 +55,12 @@ class BaseMetric(ABC):
         Check that the components used in the metric are valid; i.e. that the metric can be
         computed on the components specified in the config. Should raise an InvalidComponentError
         if the component is not valid.
+
+        Args:
+            component_config: The component configuration.
+
+        Raises:
+            InvalidComponentError -- if the component is not valid.
         """
         raise NotImplementedError
 

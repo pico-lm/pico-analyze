@@ -1,5 +1,5 @@
 """
-This module contains the implementation of the singular values metric.
+Condition number is the ratio of the largest to smallest singular value of the input.
 """
 
 import torch
@@ -23,6 +23,12 @@ class ConditionNumberMetric(BaseMetric):
     def compute_metric(self, component_layer_data: torch.Tensor) -> float:
         """
         Computes the condition number of the given input.
+
+        Args:
+            component_layer_data: Tensor containing the data to analyze
+
+        Returns:
+            float: The computed condition number
         """
 
         # Compute the singular values of the input

@@ -103,7 +103,6 @@ def initialize_wandb(config: LearningDynamicsConfig) -> wandb.sdk.wandb_run.Run:
 
     Args:
         config: LearningDynamicsConfig -- the learning dynamics config.
-        training_config: Dict[str, Any] -- the training config.
 
     Returns:
         wandb.sdk.wandb_run.Run -- the wandb run.
@@ -157,6 +156,9 @@ class CheckpointLocation:
     def _validate_input(self):
         """
         Need to ensure that either the repo_id and branch are specified or the run_path is specified.
+
+        Raises:
+            InvalidRunLocationError: If the run_path is not specified and the repo_id and branch are not specified.
         """
         if self.run_path is not None:
             if not os.path.exists(self.run_path):

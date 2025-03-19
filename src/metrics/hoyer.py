@@ -27,6 +27,12 @@ class HoyerMetric(BaseMetric):
     def compute_metric(self, component_layer_data: torch.Tensor) -> float:
         """
         Computes the Hoyer sparsity metric for a given component layer data.
+
+        Args:
+            component_layer_data: Tensor containing the data to analyze
+
+        Returns:
+            float: The computed Hoyer sparsity metric
         """
 
         x = component_layer_data.flatten()

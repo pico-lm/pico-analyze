@@ -6,7 +6,6 @@ import os
 from abc import ABC, abstractmethod
 from typing import Any, Dict
 
-# typing imports
 import torch
 
 from src.config.base import BaseComponentConfig
@@ -62,8 +61,8 @@ class BaseComponent(ABC):
         Args:
             component_config: BaseComponentConfig -- the component configuration.
 
-        Returns:
-            bool -- whether the component config is valid.
+        Raises:
+            InvalidComponentError -- if the component config is invalid.
         """
         raise NotImplementedError
 

@@ -3,7 +3,6 @@ PWCCA (Projection Weighted Canonical Correlation Analysis) is a comparative metr
 how similar two sets of activations are between two different checkpoints.
 """
 
-# Typing imports
 import torch
 
 from lib.svcca.pwcca import compute_pwcca
@@ -40,9 +39,15 @@ class PWCCAMetric(BaseComparativeMetric):
         target_component_layer_data: torch.Tensor,
     ) -> float:
         """
-        Computes the PWCCA of the given data.
-        """
+        Computes the PWCCA between the source and target component layer activations.
 
+        Args:
+            source_component_layer_data: Tensor containing the source data to analyze
+            target_component_layer_data: Tensor containing the target data to analyze
+
+        Returns:
+            float: The computed PWCCA
+        """
         # transforming the data to numpy
         np_source_component_layer_data = source_component_layer_data.to(
             dtype=torch.float32

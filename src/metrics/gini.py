@@ -1,7 +1,6 @@
 """
 Gini coefficient is a measure of the 'inequality' of a distribution; we use it indirectly to
 measure the sparsity of a matrix.
-
 """
 
 import torch
