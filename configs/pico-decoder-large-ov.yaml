@@ -1,9 +1,9 @@
-analysis_name: "pico-decoder-ov-analysis"
+analysis_name: "pico-decoder-large-ov-analysis"
 
 metrics: 
 
   - metric_name: cka
-    target_checkpoint: 100
+    target_checkpoint: 50_000
     data_split: "val"
     components: 
       - component_name: ov_circuit

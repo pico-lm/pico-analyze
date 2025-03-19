@@ -1,6 +1,11 @@
-analysis_name: "pico-decoder-demo-2-analysis"
+# This is a demo config for the pico-analyze tool. Feel free to use this as a template
+# to analyze your own models.
+
+analysis_name: "pico-decoder-demo-1-analysis"
 
 metrics: 
+
+  # CKA metric (Comparative)
   - metric_name: cka
     target_checkpoint: 100
     data_split: "val"
@@ -10,49 +15,57 @@ metrics:
         layer_suffixes: 
           output_layer: "attention.o_proj"
           value_layer: "attention.v_proj"
-        layers: [0,1,2,3,4,5,6,7,8,9,10,11]
-      - component_name: simple
-        data_type: "activations"
-        layer_suffixes: "swiglu.w_2"
-        layers: [0,1,2,3,4,5,6,7,8,9,10,11]
-  - metric_name: per
-    data_split: "train"
-    components: 
-      - component_name: simple
-        data_type: "weights"
-        layer_suffixes: "swiglu.w_2"
-        layers: [0,1,2,3,4,5,6,7,8,9,10,11]
-  - metric_name: condition_number
-    data_split: "train"
-    components: 
-      - component_name: simple
-        data_type: "weights"
-        layer_suffixes: "swiglu.w_2"
-        layers: [0,1,2,3,4,5,6,7,8,9,10,11]
-  - metric_name: gini
-    data_split: "val"
-    components: 
-      - component_name: simple
-        data_type: "weights"
-        layer_suffixes: "swiglu.w_2"
-        layers: [0,1,2,3,4,5,6,7,8,9,10,11]
-  - metric_name: hoyer
-    data_split: "val"
-    components: 
-      - component_name: simple
-        data_type: "weights"
-        layer_suffixes: "swiglu.w_2"
-        layers: [0,1,2,3,4,5,6,7,8,9,10,11]
+        layers: [0,11]
+
+  # PWCCA metric (Comparative)
   - metric_name: pwcca
-    target_checkpoint: 50
-    data_split: "train"
+    target_checkpoint: 100
+    data_split: "val"
     components: 
       - component_name: ov_circuit
         data_type: "activations"
         layer_suffixes: 
           output_layer: "attention.o_proj"
           value_layer: "attention.v_proj"
-        layers: [0,1,2,3,4,5,6,7,8,9,10,11]
+        layers: [0,11]
+
+  # PER metric 
+  - metric_name: per
+    data_split: "train"
+    components: 
+      - component_name: simple
+        data_type: "gradients"
+        layer_suffixes: "swiglu.w_2"
+        layers: [0,11]
+
+  # Condition number metric
+  - metric_name: condition_number
+    data_split: "val"
+    components: 
+      - component_name: simple
+        data_type: "weights"
+        layer_suffixes: "swiglu.w_2"
+        layers: [0,11]
+
+  # Gini metric
+  - metric_name: gini
+    data_split: "val"
+    components: 
+      - component_name: simple
+        data_type: "weights"
+        layer_suffixes: "swiglu.w_2"
+        layers: [0,11]
+
+  # Hoyer metric
+  - metric_name: hoyer
+    data_split: "train"
+    components: 
+      - component_name: simple
+        data_type: "gradients"
+        layer_suffixes: "swiglu.w_2"
+        layers: [0,11]
+
+  # Nuclear norm metric
   - metric_name: norm
     data_split: "val"
     norm_type: "nuclear"
@@ -62,7 +75,7 @@ metrics:
         layer_suffixes: 
           output_layer: "attention.o_proj"
           value_layer: "attention.v_proj"
-        layers: [0,1,2,3,4,5,6,7,8,9,10,11]
+        layers: [0,11]
         
 
 steps: 
@@ -73,7 +86,7 @@ steps:
 monitoring: 
   output_dir: "analysis_results"
 
-  save_to_wandb: false
+  save_to_wandb: true
   wandb:
     entity: "pico-lm"
     project: "pico-demo"
