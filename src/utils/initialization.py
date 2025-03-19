@@ -9,9 +9,9 @@ from datetime import datetime
 # typing imports
 from typing import Any, Dict
 
-import wandb
 import yaml
 
+import wandb
 from src.config.learning_dynamics import LearningDynamicsConfig
 from src.utils.exceptions import InvalidRunLocationError
 
