@@ -32,7 +32,7 @@
 
    ```bash
    git clone https://github.com/pico-lm/pico-analyze
-   cd pico
+   cd pico-analyze
    ```
 
 2. **Configure Environment**
