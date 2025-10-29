@@ -41,6 +41,10 @@
    ```bash
    export HF_TOKEN=your_huggingface_token
    export WANDB_API_KEY=your_wandb_key
+   
+   # Optional: For Pico Report integration
+   export PICO_API_KEY=your_pico_api_key
+   export PICO_LAB_HASH=your_lab_hash
    ```
 
 3. **Install Dependencies**
@@ -102,6 +106,41 @@
 4. **Review Output**  
    - Results are saved to `analysis_results/my_analysis`
    - Inspect JSON logs for each step, or open Weights & Biases to see dynamic charts
+
+---
+
+## **Pico Report Integration**
+
+Pico Analyze integrates seamlessly with [Pico Labs](https://picolabs.space), a platform for tracking and sharing experiments. When enabled, your analysis metrics are automatically logged to your private dashboard alongside training metrics from pico-train.
+
+### **Setup**
+
+1. **Install pico-report** (optional dependency):
+   ```bash
+   poetry install --extras pico-report
+   ```
+
+2. **Configure environment variables**:
+   ```bash
+   export PICO_API_KEY=your_pico_api_key
+   export PICO_LAB_HASH=your_lab_hash
+   ```
+
+3. **Enable in your config**:
+   ```yaml
+   monitoring:
+     save_to_picolabs: true
+     pico_report:
+       lab_hash: "your_lab_hash"  # Optional if set via env var
+       experiment_name: "my_analysis"  # Optional, defaults to analysis_name
+   ```
+
+### **Benefits**
+
+- **Unified Dashboard**: View both training and analysis metrics in one place
+- **Per-Layer Visualization**: Automatic visualization of layer-wise metrics
+- **Easy Sharing**: Share your analysis results with collaborators
+- **Version Control**: Track different analysis runs over time
 
 ---
 

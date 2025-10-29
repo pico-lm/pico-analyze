@@ -15,6 +15,10 @@ datasets = "^3.2.0"
 rich = "^13.9.4"
 pre-commit = "^4.2.0"
 wandb = "^0.19.5"
+pico-report = {version = "^1.0.0", optional = true}
+
+[tool.poetry.extras]
+pico-report = ["pico-report"]
 
 [tool.poetry.scripts]
 analyze = "scripts.analyze:main"

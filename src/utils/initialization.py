@@ -134,6 +134,57 @@ def initialize_wandb(config: LearningDynamicsConfig) -> wandb.sdk.wandb_run.Run:
     return wandb_run
 
 
+def initialize_pico_reporter(config: LearningDynamicsConfig):
+    """
+    Sets up the Pico Reporter to log out learning dynamics metrics to Pico Labs.
+    
+    This function initializes a PicoReporter instance that can be used to log analysis
+    metrics to the Pico Labs platform. It requires PICO_API_KEY and PICO_LAB_HASH
+    environment variables to be set.
+    
+    Args:
+        config: LearningDynamicsConfig -- the learning dynamics config.
+        
+    Returns:
+        PicoReporter instance or None if save_to_picolabs is False
+        
+    Raises:
+        ImportError: If pico-report is not installed
+        PicoConfigError: If required environment variables are not set
+    """
+    if not config.monitoring.save_to_picolabs:
+        return None
+        
+    try:
+        from pico_report.integrations import PicoReporter
+    except ImportError:
+        raise ImportError(
+            "pico-report is not installed. Please install it with: "
+            "pip install pico-report"
+        )
+    
+    # Get lab_hash and experiment_name from config or environment
+    lab_hash = config.monitoring.pico_report.lab_hash
+    experiment_name = (
+        config.monitoring.pico_report.experiment_name 
+        or config.analysis_name
+    )
+    
+    # Create PicoReporter instance
+    reporter = PicoReporter(
+        lab_hash=lab_hash,
+        experiment_name=experiment_name
+    )
+    
+    # Setup experiment
+    reporter.setup_experiment(
+        experiment_name=experiment_name,
+        description=f"Learning dynamics analysis: {config.analysis_name}"
+    )
+    
+    return reporter
+
+
 ####################
 #
 # Helper Functions and Classes

@@ -90,3 +90,10 @@ monitoring:
   wandb:
     entity: "pico-lm"
     project: "pico-demo"
+  
+  # Optional: Enable Pico Report integration
+  # Requires PICO_API_KEY and PICO_LAB_HASH environment variables
+  save_to_picolabs: false
+  pico_report:
+    lab_hash: ""  # Can also be set via PICO_LAB_HASH env var
+    experiment_name: ""  # Defaults to analysis_name if not set

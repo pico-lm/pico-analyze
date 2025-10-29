@@ -20,6 +20,7 @@ from src.utils.initialization import (
     initialize_config,
     initialize_logging,
     initialize_output_dir,
+    initialize_pico_reporter,
     initialize_wandb,
 )
 from src.utils.logging import pretty_print_component_metrics, pretty_print_config
@@ -86,6 +87,10 @@ def main(config_path: str, repo_id: str, branch: str, run_path: str):
     # Set up the wandb run
     if metrics_config.monitoring.save_to_wandb:
         wandb_run = initialize_wandb(metrics_config)
+    
+    # Set up the pico reporter
+    if metrics_config.monitoring.save_to_picolabs:
+        pico_reporter = initialize_pico_reporter(metrics_config)
 
     ############################################################
     #
@@ -169,6 +174,15 @@ def main(config_path: str, repo_id: str, branch: str, run_path: str):
                 }
                 # Add the step information
                 wandb_run.log(wandb_formatted_data, step=step)
+            
+            if metrics_config.monitoring.save_to_picolabs:
+                # Log to Pico Labs using the log_analysis_metrics method
+                pico_reporter.log_analysis_metrics(
+                    metric_name=metric_name,
+                    metric_data=component_metrics_dict,
+                    step=step,
+                    data_split=metric.metric_config.data_split
+                )
 
         # Log out all of the metrics at the current step
         pretty_print_component_metrics(logger, step, step_metrics)
