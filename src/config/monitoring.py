@@ -22,7 +22,10 @@ class PicoReportConfig:
     """
     
     lab_hash: Optional[str] = None
-    experiment_name: Optional[str] = None
+    
+    # Git tracking: automatically create git commits for each analysis run
+    # This captures the exact code state and links it to your analysis in the dashboard
+    auto_commit: bool = True
 
 
 @dataclass

@@ -96,4 +96,4 @@ monitoring:
   save_to_picolabs: false
   pico_report:
     lab_hash: ""  # Can also be set via PICO_LAB_HASH env var
-    experiment_name: ""  # Defaults to analysis_name if not set
+    auto_commit: true  # Automatically create git commits for each analysis run (default: true)

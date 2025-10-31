@@ -142,6 +142,11 @@ def initialize_pico_reporter(config: LearningDynamicsConfig):
     metrics to the Pico Labs platform. It requires PICO_API_KEY and PICO_LAB_HASH
     environment variables to be set.
     
+    The reporter can automatically create git commits for each analysis run when auto_commit
+    is enabled in the config (pico_report.auto_commit). This captures the exact code state
+    and links it to your analysis, allowing you to see code diffs between analysis runs
+    in the dashboard.
+    
     Args:
         config: LearningDynamicsConfig -- the learning dynamics config.
         
@@ -163,17 +168,16 @@ def initialize_pico_reporter(config: LearningDynamicsConfig):
             "pip install pico-report"
         )
     
-    # Get lab_hash and experiment_name from config or environment
+    # Get lab_hash, experiment_name, and auto_commit from config
     lab_hash = config.monitoring.pico_report.lab_hash
-    experiment_name = (
-        config.monitoring.pico_report.experiment_name 
-        or config.analysis_name
-    )
+    experiment_name = config.analysis_name
+    auto_commit = config.monitoring.pico_report.auto_commit
     
-    # Create PicoReporter instance
+    # Create PicoReporter instance with auto_commit setting
     reporter = PicoReporter(
         lab_hash=lab_hash,
-        experiment_name=experiment_name
+        experiment_name=experiment_name,
+        auto_commit=auto_commit
     )
     
     # Setup experiment

@@ -132,7 +132,7 @@ Pico Analyze integrates seamlessly with [Pico Labs](https://picolabs.space), a p
      save_to_picolabs: true
      pico_report:
        lab_hash: "your_lab_hash"  # Optional if set via env var
-       experiment_name: "my_analysis"  # Optional, defaults to analysis_name
+       auto_commit: true  # Optional, automatically create git commits (default: true)
    ```
 
 ### **Benefits**
@@ -141,6 +141,7 @@ Pico Analyze integrates seamlessly with [Pico Labs](https://picolabs.space), a p
 - **Per-Layer Visualization**: Automatic visualization of layer-wise metrics
 - **Easy Sharing**: Share your analysis results with collaborators
 - **Version Control**: Track different analysis runs over time
+- **Git Integration**: Automatically commit your code state with each analysis run to track exactly what configuration was used
 
 ---
 
