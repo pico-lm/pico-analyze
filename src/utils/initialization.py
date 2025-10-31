@@ -9,9 +9,9 @@ from datetime import datetime
 # typing imports
 from typing import Any, Dict
 
+import wandb
 import yaml
 
-import wandb
 from src.config.learning_dynamics import LearningDynamicsConfig
 from src.utils.exceptions import InvalidRunLocationError
 
@@ -137,29 +137,29 @@ def initialize_wandb(config: LearningDynamicsConfig) -> wandb.sdk.wandb_run.Run:
 def initialize_pico_reporter(config: LearningDynamicsConfig):
     """
     Sets up the Pico Reporter to log out learning dynamics metrics to Pico Labs.
-    
+
     This function initializes a PicoReporter instance that can be used to log analysis
     metrics to the Pico Labs platform. It requires PICO_API_KEY and PICO_LAB_HASH
     environment variables to be set.
-    
+
     The reporter can automatically create git commits for each analysis run when auto_commit
     is enabled in the config (pico_report.auto_commit). This captures the exact code state
     and links it to your analysis, allowing you to see code diffs between analysis runs
     in the dashboard.
-    
+
     Args:
         config: LearningDynamicsConfig -- the learning dynamics config.
-        
+
     Returns:
         PicoReporter instance or None if save_to_picolabs is False
-        
+
     Raises:
         ImportError: If pico-report is not installed
         PicoConfigError: If required environment variables are not set
     """
     if not config.monitoring.save_to_picolabs:
         return None
-        
+
     try:
         from pico_report.integrations import PicoReporter
     except ImportError:
@@ -167,7 +167,7 @@ def initialize_pico_reporter(config: LearningDynamicsConfig):
             "pico-report is not installed. Please install it with: "
             "pip install pico-report"
         )
-    
+
     # Lab hash can be provided via config or environment variable
     lab_hash = config.monitoring.pico_report.lab_hash
     if not lab_hash or lab_hash == "":
@@ -177,25 +177,22 @@ def initialize_pico_reporter(config: LearningDynamicsConfig):
         lab_hash is not None and lab_hash != ""
     ), "Lab hash must be provided via config (pico_report.lab_hash) or PICO_LAB_HASH environment variable."
 
-
     experiment_name = config.analysis_name
 
     # Get auto_commit setting from config
     auto_commit = config.monitoring.pico_report.auto_commit
-    
+
     # Create PicoReporter instance with auto_commit setting
     pico_reporter = PicoReporter(
-        lab_hash=lab_hash,
-        experiment_name=experiment_name,
-        auto_commit=auto_commit
+        lab_hash=lab_hash, experiment_name=experiment_name, auto_commit=auto_commit
     )
-    
+
     # Setup experiment
     pico_reporter.setup_experiment(
         experiment_name=experiment_name,
-        description=f"Learning dynamics analysis: {config.analysis_name}"
+        description=f"Learning dynamics analysis: {config.analysis_name}",
     )
-    
+
     return pico_reporter
 
 
