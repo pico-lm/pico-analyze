@@ -168,25 +168,35 @@ def initialize_pico_reporter(config: LearningDynamicsConfig):
             "pip install pico-report"
         )
     
-    # Get lab_hash, experiment_name, and auto_commit from config
+    # Lab hash can be provided via config or environment variable
     lab_hash = config.monitoring.pico_report.lab_hash
+    if not lab_hash or lab_hash == "":
+        lab_hash = os.getenv("PICO_LAB_HASH", "")
+
+    assert (
+        lab_hash is not None and lab_hash != ""
+    ), "Lab hash must be provided via config (pico_report.lab_hash) or PICO_LAB_HASH environment variable."
+
+
     experiment_name = config.analysis_name
+
+    # Get auto_commit setting from config
     auto_commit = config.monitoring.pico_report.auto_commit
     
     # Create PicoReporter instance with auto_commit setting
-    reporter = PicoReporter(
+    pico_reporter = PicoReporter(
         lab_hash=lab_hash,
         experiment_name=experiment_name,
         auto_commit=auto_commit
     )
     
     # Setup experiment
-    reporter.setup_experiment(
+    pico_reporter.setup_experiment(
         experiment_name=experiment_name,
         description=f"Learning dynamics analysis: {config.analysis_name}"
     )
     
-    return reporter
+    return pico_reporter
 
 
 ####################
