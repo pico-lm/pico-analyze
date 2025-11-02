@@ -53,15 +53,9 @@ class CKAMetric(BaseComparativeMetric):
         """
 
         # NOTE: The CKA implementation expects float32 numpy darrays
-        np_src_component_layer_data = source_component_layer_data.to(
-            dtype=torch.float32
-        ).numpy()
-        np_tgt_component_layer_data = target_component_layer_data.to(
-            dtype=torch.float32
-        ).numpy()
+        np_src_component_layer_data = source_component_layer_data.to(dtype=torch.float32).numpy()
+        np_tgt_component_layer_data = target_component_layer_data.to(dtype=torch.float32).numpy()
 
-        cka_value = cka.feature_space_linear_cka(
-            np_src_component_layer_data, np_tgt_component_layer_data
-        )
+        cka_value = cka.feature_space_linear_cka(np_src_component_layer_data, np_tgt_component_layer_data)
 
         return cka_value

@@ -27,9 +27,7 @@ class LearningDynamicsConfig:
     # Name for the analysis, used to store/bookkeep the analysis results
     analysis_name: str = None
 
-    metrics: List[BaseMetricConfig | BaseComparativeMetricConfig] = field(
-        default_factory=list
-    )
+    metrics: List[BaseMetricConfig | BaseComparativeMetricConfig] = field(default_factory=list)
     steps: List[int] = field(default_factory=list)
 
     monitoring: MonitoringConfig = field(default_factory=MonitoringConfig)
@@ -93,14 +91,10 @@ class LearningDynamicsConfig:
                 if isinstance(metric, dict):
                     metric_name = metric.get("metric_name")
                     if metric_name is None:
-                        raise ValueError(
-                            "metric_name must be specified for each metric"
-                        )
+                        raise ValueError("metric_name must be specified for each metric")
 
                     if metric_name in METRIC_CONFIG_REGISTRY:
-                        processed_metrics.append(
-                            METRIC_CONFIG_REGISTRY[metric_name](**metric)
-                        )
+                        processed_metrics.append(METRIC_CONFIG_REGISTRY[metric_name](**metric))
                     else:
                         raise ValueError(f"Unknown metric_name: {metric_name}")
                 else:
@@ -111,8 +105,7 @@ class LearningDynamicsConfig:
             self.steps = list(
                 range(
                     self.steps["start"],
-                    self.steps["end"]
-                    + self.steps["step"],  # + step to include end step
+                    self.steps["end"] + self.steps["step"],  # + step to include end step
                     self.steps["step"],
                 )
             )

@@ -62,16 +62,12 @@ class OVComponent(BaseComponent):
         layer_ov_activation_per_head = {}
 
         for head_idx in range(self.attention_n_heads):
-            kv_head_idx = head_idx // (
-                self.attention_n_heads // self.attention_n_kv_heads
-            )
+            kv_head_idx = head_idx // (self.attention_n_heads // self.attention_n_kv_heads)
 
             if layer_value_activation.dtype != layer_output_projection.dtype:
                 # NOTE: activations might be stored as memory efficient floats (e.g. bfloat16)
                 # so we need to make sure we cast to the same type as the weights
-                layer_value_activation = layer_value_activation.to(
-                    layer_output_projection.dtype
-                )
+                layer_value_activation = layer_value_activation.to(layer_output_projection.dtype)
 
             start_value_activation = kv_head_idx * self.attention_head_dim
             end_value_activation = (kv_head_idx + 1) * self.attention_head_dim
@@ -80,16 +76,13 @@ class OVComponent(BaseComponent):
                 layer_value_activation[:, start_value_activation:end_value_activation]
                 @ layer_output_projection[
                     :,
-                    head_idx * self.attention_head_dim : (head_idx + 1)
-                    * self.attention_head_dim,
+                    head_idx * self.attention_head_dim : (head_idx + 1) * self.attention_head_dim,
                 ].T
             )
 
             layer_ov_activation_per_head[f"{head_idx}"] = ov_activation_per_head
 
-        layer_ov_activation = torch.cat(
-            list(layer_ov_activation_per_head.values()), dim=1
-        )
+        layer_ov_activation = torch.cat(list(layer_ov_activation_per_head.values()), dim=1)
 
         return layer_ov_activation_per_head, layer_ov_activation
 
@@ -119,9 +112,7 @@ class OVComponent(BaseComponent):
         layer_ov_weights_per_head = {}
 
         for head_idx in range(self.attention_n_heads):
-            kv_head_idx = head_idx // (
-                self.attention_n_heads // self.attention_n_kv_heads
-            )
+            kv_head_idx = head_idx // (self.attention_n_heads // self.attention_n_kv_heads)
 
             start_value_projection = kv_head_idx * self.attention_head_dim
             end_value_projection = (kv_head_idx + 1) * self.attention_head_dim
@@ -131,9 +122,7 @@ class OVComponent(BaseComponent):
 
             ov_weights_per_head = (
                 layer_value_projection[start_value_projection:end_value_projection, :]
-                @ layer_output_projection[
-                    :, start_output_projection:end_output_projection
-                ]
+                @ layer_output_projection[:, start_output_projection:end_output_projection]
             )
 
             layer_ov_weights_per_head[f"{head_idx}"] = ov_weights_per_head
@@ -176,9 +165,7 @@ class OVComponent(BaseComponent):
         layer_ov_gradients_per_head = {}
 
         for head_idx in range(self.attention_n_heads):
-            kv_head_idx = head_idx // (
-                self.attention_n_heads // self.attention_n_kv_heads
-            )
+            kv_head_idx = head_idx // (self.attention_n_heads // self.attention_n_kv_heads)
 
             start_value_projection = kv_head_idx * self.attention_head_dim
             end_value_projection = (kv_head_idx + 1) * self.attention_head_dim
@@ -186,21 +173,13 @@ class OVComponent(BaseComponent):
             start_output_projection = head_idx * self.attention_head_dim
             end_output_projection = (head_idx + 1) * self.attention_head_dim
 
-            head_value_gradient = layer_value_gradient[
-                start_value_projection:end_value_projection, :
-            ]
+            head_value_gradient = layer_value_gradient[start_value_projection:end_value_projection, :]
 
-            head_output_gradient = layer_output_gradient[
-                :, start_output_projection:end_output_projection
-            ]
+            head_output_gradient = layer_output_gradient[:, start_output_projection:end_output_projection]
 
-            head_value_projection = layer_value_projection[
-                start_value_projection:end_value_projection, :
-            ]
+            head_value_projection = layer_value_projection[start_value_projection:end_value_projection, :]
 
-            head_output_projection = layer_output_projection[
-                :, start_output_projection:end_output_projection
-            ]
+            head_output_projection = layer_output_projection[:, start_output_projection:end_output_projection]
 
             # NOTE: chain rule for gradients; dL/dOV = dL/dOutput * dOutput/dOV + dL/dValue * dValue/dOV
             head_ov_gradient = (head_output_projection @ head_value_gradient) + (
@@ -209,9 +188,7 @@ class OVComponent(BaseComponent):
 
             layer_ov_gradients_per_head[f"{head_idx}"] = head_ov_gradient
 
-        layer_ov_gradients = torch.cat(
-            list(layer_ov_gradients_per_head.values()), dim=1
-        )
+        layer_ov_gradients = torch.cat(list(layer_ov_gradients_per_head.values()), dim=1)
 
         return layer_ov_gradients_per_head, layer_ov_gradients
 
@@ -223,9 +200,7 @@ class OVComponent(BaseComponent):
             "value_layer" not in component_config.layer_suffixes
             or "output_layer" not in component_config.layer_suffixes
         ):
-            raise InvalidComponentError(
-                "OV circuit component requires value and output layer suffixes."
-            )
+            raise InvalidComponentError("OV circuit component requires value and output layer suffixes.")
 
     def __call__(
         self,
@@ -306,8 +281,8 @@ class OVComponent(BaseComponent):
                     f"{_model_prefix}{layer_idx}.ov_circuit.{component_config.data_type}.heads.{head_idx}"
                 ] = ov_component_head
 
-            checkpoint_layer_component[
-                f"{_model_prefix}{layer_idx}.ov_circuit.{component_config.data_type}"
-            ] = ov_component
+            checkpoint_layer_component[f"{_model_prefix}{layer_idx}.ov_circuit.{component_config.data_type}"] = (
+                ov_component
+            )
 
         return checkpoint_layer_component

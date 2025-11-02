@@ -82,9 +82,7 @@ class BaseMetric(ABC):
                 that are the preprocessed components at that layer.
         """
         component_data_list = []
-        for component, component_config in zip(
-            self.components, self.metric_config.components
-        ):
+        for component, component_config in zip(self.components, self.metric_config.components):
             component_data_list.append(component(checkpoint_states, component_config))
 
         return component_data_list
@@ -102,9 +100,7 @@ class BaseMetric(ABC):
         """
         pass
 
-    def __call__(
-        self, checkpoint_states: Dict[str, Dict[str, torch.Tensor]]
-    ) -> List[Dict[str, float]]:
+    def __call__(self, checkpoint_states: Dict[str, Dict[str, torch.Tensor]]) -> List[Dict[str, float]]:
         """
         Computed the desired metrics on the specified components in the metric config. Reads in the
         original data, preprocesses it into components, and then computes the desired metrics on each
@@ -130,9 +126,7 @@ class BaseMetric(ABC):
             component_metric = {}
 
             for _component_layer_name, _component_layer_data in component_data.items():
-                component_metric[_component_layer_name] = self.compute_metric(
-                    _component_layer_data
-                )
+                component_metric[_component_layer_name] = self.compute_metric(_component_layer_data)
 
             component_metrics_list.append(component_metric)
 
@@ -188,9 +182,7 @@ class BaseComparativeMetric(BaseMetric):
         """
         raise NotImplementedError
 
-    def __call__(
-        self, source_checkpoint_states: Dict[str, Dict[str, torch.Tensor]]
-    ) -> List[Dict[str, float]]:
+    def __call__(self, source_checkpoint_states: Dict[str, Dict[str, torch.Tensor]]) -> List[Dict[str, float]]:
         """
         Computes the metric between two sets of checkpoint states.
 
@@ -215,9 +207,7 @@ class BaseComparativeMetric(BaseMetric):
 
         component_metrics_list = []
 
-        for src_component_data, target_component_data in zip(
-            src_component_data_list, self._target_component_data_list
-        ):
+        for src_component_data, target_component_data in zip(src_component_data_list, self._target_component_data_list):
             # source_component_data will be a dictionary mapping layer names to tensors
             component_metric = {}
 
@@ -225,9 +215,7 @@ class BaseComparativeMetric(BaseMetric):
                 component_layer_name,
                 source_component_layer_data,
             ) in src_component_data.items():
-                target_component_layer_data = target_component_data[
-                    component_layer_name
-                ]
+                target_component_layer_data = target_component_data[component_layer_name]
 
                 component_metric[component_layer_name] = self.compute_metric(
                     source_component_layer_data,

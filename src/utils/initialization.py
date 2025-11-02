@@ -2,9 +2,9 @@
 Initialize configuration objects from a YAML file.
 """
 
+from datetime import datetime
 import logging
 import os
-from datetime import datetime
 
 # typing imports
 from typing import Any, Dict
@@ -22,9 +22,7 @@ from src.utils.exceptions import InvalidRunLocationError
 ####################
 
 
-def initialize_output_dir(
-    config: LearningDynamicsConfig, training_config: Dict[str, Any]
-) -> str:
+def initialize_output_dir(config: LearningDynamicsConfig, training_config: Dict[str, Any]) -> str:
     """
     Creates the output directory for the analysis. If no analysis name is specified, we will use
     the run name and the current date and time as a unique identifier.
@@ -42,9 +40,7 @@ def initialize_output_dir(
         # if no analysis name is specified, use the run name and the current date and time
         # as a unique identifier
         _analysis_name = (
-            training_config["checkpointing"]["run_name"]
-            + "_analysis_"
-            + datetime.now().strftime("%Y%m%d_%H%M%S")
+            training_config["checkpointing"]["run_name"] + "_analysis_" + datetime.now().strftime("%Y%m%d_%H%M%S")
         )
 
     config.analysis_name = _analysis_name
@@ -112,12 +108,8 @@ def initialize_wandb(config: LearningDynamicsConfig) -> wandb.sdk.wandb_run.Run:
         return None
 
     # check if there is a wandb entity and project specified in the config
-    assert (
-        config.monitoring.wandb.entity is not None
-    ), "Wandb entity must be specified in the config."
-    assert (
-        config.monitoring.wandb.project is not None
-    ), "Wandb project must be specified in the config."
+    assert config.monitoring.wandb.entity is not None, "Wandb entity must be specified in the config."
+    assert config.monitoring.wandb.project is not None, "Wandb project must be specified in the config."
 
     entity = config.monitoring.wandb.entity
     project = config.monitoring.wandb.project
@@ -163,10 +155,7 @@ def initialize_pico_reporter(config: LearningDynamicsConfig):
     try:
         from pico_report.integrations import PicoReporter
     except ImportError:
-        raise ImportError(
-            "pico-report is not installed. Please install it with: "
-            "pip install pico-report"
-        )
+        raise ImportError("pico-report is not installed. Please install it with: " "pip install pico-report")
 
     # Lab hash can be provided via config or environment variable
     lab_hash = config.monitoring.pico_report.lab_hash
@@ -183,9 +172,7 @@ def initialize_pico_reporter(config: LearningDynamicsConfig):
     auto_commit = config.monitoring.pico_report.auto_commit
 
     # Create PicoReporter instance with auto_commit setting
-    pico_reporter = PicoReporter(
-        lab_hash=lab_hash, experiment_name=experiment_name, auto_commit=auto_commit
-    )
+    pico_reporter = PicoReporter(lab_hash=lab_hash, experiment_name=experiment_name, auto_commit=auto_commit)
 
     # Setup experiment
     pico_reporter.setup_experiment(

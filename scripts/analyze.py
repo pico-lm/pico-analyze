@@ -6,9 +6,9 @@ Given a metrics config and a trained model, this script will load in the model a
 checkpoints and computed the specified learning dynamics metrics.
 """
 
+from dataclasses import asdict
 import json
 import os
-from dataclasses import asdict
 
 import click
 

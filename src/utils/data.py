@@ -4,22 +4,20 @@ Utilities for downloading checkpoint data from HuggingFace or from a local run.
 NOTE: Assumes that models have been uploaded to HuggingFace using pico-train.
 """
 
+from functools import lru_cache
 import os
 import re
-from functools import lru_cache
 
-import torch
-import yaml
 from datasets import load_from_disk
 from huggingface_hub import HfApi, hf_hub_download, snapshot_download
+import torch
+import yaml
 
 from src.utils.exceptions import InvalidStepError
 from src.utils.initialization import CheckpointLocation
 
 
-def get_checkpoint_states(
-    checkpoint_location: CheckpointLocation, step: int = None, data_split: str = "val"
-) -> dict:
+def get_checkpoint_states(checkpoint_location: CheckpointLocation, step: int = None, data_split: str = "val") -> dict:
     """
     Returns all the available checkpoint states available for a given step, data split, in a given
     run path or a given HuggingFace repository and branch. We assume that the checkpoint states are
@@ -66,9 +64,7 @@ def get_checkpoint_states(
             }
     """
     if checkpoint_location.is_remote:
-        return _download_checkpoint_states(
-            checkpoint_location.repo_id, checkpoint_location.branch, step, data_split
-        )
+        return _download_checkpoint_states(checkpoint_location.repo_id, checkpoint_location.branch, step, data_split)
     else:
         return _load_checkpoint_states(checkpoint_location.run_path, step, data_split)
 
@@ -78,9 +74,7 @@ def get_training_config(checkpoint_location: CheckpointLocation) -> dict:
     Loads in the training config from a checkpoint location.
     """
     if checkpoint_location.is_remote:
-        return _download_training_config(
-            checkpoint_location.repo_id, checkpoint_location.branch
-        )
+        return _download_training_config(checkpoint_location.repo_id, checkpoint_location.branch)
     else:
         return _load_training_config(checkpoint_location.run_path)
 
@@ -111,9 +105,7 @@ def _download_training_config(repo_id: str, branch: str) -> dict:
     """
 
     # Get the training_config.yaml file from the HuggingFace repository
-    training_config_path = hf_hub_download(
-        repo_id=repo_id, revision=branch, filename="training_config.yaml"
-    )
+    training_config_path = hf_hub_download(repo_id=repo_id, revision=branch, filename="training_config.yaml")
 
     return yaml.safe_load(open(training_config_path, "r"))
 
@@ -170,9 +162,7 @@ def _get_learning_dynamics_commits(repo_id: str, branch: str, data_split: str) -
 # -----------------
 
 
-def _get_checkpoint_states_dict(
-    learning_dynamics_path: str, data_split: list[str]
-) -> dict:
+def _get_checkpoint_states_dict(learning_dynamics_path: str, data_split: list[str]) -> dict:
     """
     Load in the checkpoint states from the directory at learning_dynamics_path. This is a helper
     function called on by _load_checkpoint_states and _download_checkpoint_states to load in the
@@ -243,9 +233,7 @@ def _load_checkpoint_states(run_path: str, step: int, data_split: str) -> dict:
     return checkpoint_states
 
 
-def _download_checkpoint_states(
-    repo_id: str, branch: str, step: int, data_split: str
-) -> dict:
+def _download_checkpoint_states(repo_id: str, branch: str, step: int, data_split: str) -> dict:
     """
     Download checkpoint states for a specific commit and step and data split.
 
@@ -260,9 +248,7 @@ def _download_checkpoint_states(
     """
 
     # get all of the commits in the branch
-    learning_dynamics_commits = _get_learning_dynamics_commits(
-        repo_id, branch, data_split
-    )
+    learning_dynamics_commits = _get_learning_dynamics_commits(repo_id, branch, data_split)
 
     if step not in learning_dynamics_commits:
         raise InvalidStepError(step)

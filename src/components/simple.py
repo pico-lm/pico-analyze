@@ -53,9 +53,7 @@ class SimpleComponent(BaseComponent):
         _model_prefix = self.get_model_prefix(checkpoint_states)
 
         for layer_idx in component_config.layers:
-            layer_component = _data[
-                f"{_model_prefix}{layer_idx}.{component_config.layer_suffixes}"
-            ]
+            layer_component = _data[f"{_model_prefix}{layer_idx}.{component_config.layer_suffixes}"]
             checkpoint_layer_component[
                 f"{_model_prefix}{layer_idx}.{component_config.layer_suffixes}.{component_config.data_type}"
             ] = layer_component

@@ -2,12 +2,12 @@
 Miscellaneous logging utilities.
 """
 
-import logging
 from io import StringIO
+import logging
 
-import yaml
 from rich.console import Console
 from rich.panel import Panel
+import yaml
 
 
 def pretty_print_config(logger: logging.Logger, title: str, config: dict) -> None:
@@ -26,9 +26,7 @@ def pretty_print_config(logger: logging.Logger, title: str, config: dict) -> Non
     console = Console(file=output, force_terminal=False)
 
     # Convert to YAML string first
-    yaml_str = yaml.dump(
-        config, default_flow_style=False, sort_keys=False, Dumper=yaml.SafeDumper
-    )
+    yaml_str = yaml.dump(config, default_flow_style=False, sort_keys=False, Dumper=yaml.SafeDumper)
 
     # Create formatted panel
     panel = Panel(
@@ -47,9 +45,7 @@ def pretty_print_config(logger: logging.Logger, title: str, config: dict) -> Non
         logger.info(line)
 
 
-def pretty_print_component_metrics(
-    logger: logging.Logger, step: int, step_metrics: dict
-):
+def pretty_print_component_metrics(logger: logging.Logger, step: int, step_metrics: dict):
     """
     Log multiple component metrics in a grouped and aligned format. We group the components by
     layer and sort them alphabetically. We also sort the metrics alphabetically. Finally,
@@ -119,9 +115,7 @@ def pretty_print_component_metrics(
                 other_components[component_key] = metric_value
 
         # Sort layers by index
-        sorted_layer_names = sorted(
-            layer_groups.keys(), key=lambda x: layer_groups[x]["_layer_idx"]
-        )
+        sorted_layer_names = sorted(layer_groups.keys(), key=lambda x: layer_groups[x]["_layer_idx"])
 
         # Display components by layer
         for layer_name in sorted_layer_names:
@@ -144,35 +138,23 @@ def pretty_print_component_metrics(
             sorted_component_names = sorted(components.keys(), key=sort_key)
 
             # Find max length for alignment
-            max_name_length = (
-                max(len(name) for name in sorted_component_names)
-                if sorted_component_names
-                else 0
-            )
+            max_name_length = max(len(name) for name in sorted_component_names) if sorted_component_names else 0
 
             # Display each component
             for component_name in sorted_component_names:
                 value = components[component_name]
                 bar_length = min(round(value * 20), 20)  # Use round() instead of int()
                 bar = "█" * bar_length + "░" * (20 - bar_length)
-                logger.info(
-                    f"  {component_name.ljust(max_name_length)} │ {bar} │ {value:.4f}"
-                )
+                logger.info(f"  {component_name.ljust(max_name_length)} │ {bar} │ {value:.4f}")
 
         # Display other components
         if other_components:
             logger.info("📌 Other Components")
             sorted_other_names = sorted(other_components.keys())
-            max_other_length = (
-                max(len(name) for name in sorted_other_names)
-                if sorted_other_names
-                else 0
-            )
+            max_other_length = max(len(name) for name in sorted_other_names) if sorted_other_names else 0
 
             for component_name in sorted_other_names:
                 value = other_components[component_name]
                 bar_length = min(round(value * 20), 20)
                 bar = "█" * bar_length + "░" * (20 - bar_length)
-                logger.info(
-                    f"  {component_name.ljust(max_other_length)} │ {bar} │ {value:.4f}"
-                )
+                logger.info(f"  {component_name.ljust(max_other_length)} │ {bar} │ {value:.4f}")

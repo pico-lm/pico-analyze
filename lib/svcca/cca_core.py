@@ -275,9 +275,7 @@ def get_cca_similarity(
     # assert dimensionality equal
     assert acts1.shape[1] == acts2.shape[1], "dimensions don't match"
     # check that acts1, acts2 are transposition
-    assert acts1.shape[0] < acts1.shape[1], (
-        "input must be number of neurons" "by datapoints"
-    )
+    assert acts1.shape[0] < acts1.shape[1], "input must be number of neurons" "by datapoints"
     return_dict = {}
 
     # compute covariance with numpy function for extra stability

@@ -14,9 +14,7 @@ from src.config.base import BaseComponentConfig
 COMPONENT_CACHE = {}
 
 
-def get_component(
-    component_config: BaseComponentConfig, run_config: Dict[str, Any]
-) -> BaseComponent:
+def get_component(component_config: BaseComponentConfig, run_config: Dict[str, Any]) -> BaseComponent:
     """
     Get a component from the registry. We cache components to avoid re-initializing them,
     if the same component is used across multiple metrics. One benefit of doing so, is that

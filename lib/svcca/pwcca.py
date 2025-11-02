@@ -51,10 +51,7 @@ def compute_pwcca(acts1, acts2, epsilon=1e-6):
         dirns = (
             np.dot(
                 sresults["coef_x"],
-                (
-                    acts1[sresults["x_idxs"]]
-                    - sresults["neuron_means1"][sresults["x_idxs"]]
-                ),
+                (acts1[sresults["x_idxs"]] - sresults["neuron_means1"][sresults["x_idxs"]]),
             )
             + sresults["neuron_means1"][sresults["x_idxs"]]
         )
@@ -65,10 +62,7 @@ def compute_pwcca(acts1, acts2, epsilon=1e-6):
         dirns = (
             np.dot(
                 sresults["coef_y"],
-                (
-                    acts1[sresults["y_idxs"]]
-                    - sresults["neuron_means2"][sresults["y_idxs"]]
-                ),
+                (acts1[sresults["y_idxs"]] - sresults["neuron_means2"][sresults["y_idxs"]]),
             )
             + sresults["neuron_means2"][sresults["y_idxs"]]
         )

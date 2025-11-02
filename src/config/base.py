@@ -29,11 +29,11 @@ class BaseComponentConfig:
     """
 
     component_name: str  # name of the component
-    layer_suffixes: (
-        str | Dict[str, str]
-    )  # suffixes of the layers to compute the metric for
+    layer_suffixes: str | Dict[str, str]  # suffixes of the layers to compute the metric for
     layers: List[int]  # layers to compute the metric for
-    data_type: str = None  # type of checkpoint data to compute the component for (e.g. "weights", "activations", "gradients")
+    data_type: str = (
+        None  # type of checkpoint data to compute the component for (e.g. "weights", "activations", "gradients")
+    )
 
 
 """

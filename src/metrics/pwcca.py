@@ -51,15 +51,9 @@ class PWCCAMetric(BaseComparativeMetric):
         # transforming the data to numpy
         # NOTE: that pwcca expects the data to be of shape '(num_neurons, num_samples)' so
         # we need to transpose the data
-        np_source_component_layer_data = (
-            source_component_layer_data.to(dtype=torch.float32).transpose(0, 1).numpy()
-        )
-        np_target_component_layer_data = (
-            target_component_layer_data.to(dtype=torch.float32).transpose(0, 1).numpy()
-        )
+        np_source_component_layer_data = source_component_layer_data.to(dtype=torch.float32).transpose(0, 1).numpy()
+        np_target_component_layer_data = target_component_layer_data.to(dtype=torch.float32).transpose(0, 1).numpy()
 
-        pwcca_metric, _, _ = compute_pwcca(
-            np_source_component_layer_data, np_target_component_layer_data, epsilon=1e-6
-        )
+        pwcca_metric, _, _ = compute_pwcca(np_source_component_layer_data, np_target_component_layer_data, epsilon=1e-6)
 
         return float(pwcca_metric)

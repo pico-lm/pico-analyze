@@ -23,9 +23,7 @@ from .per import PERMetric
 from .pwcca import PWCCAMetric
 
 
-def get_metric(
-    metric_config: BaseMetricConfig, training_config: Dict[str, Any]
-) -> BaseMetric:
+def get_metric(metric_config: BaseMetricConfig, training_config: Dict[str, Any]) -> BaseMetric:
     """
     Loads a metric from the metrics directory.
     """

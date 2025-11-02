@@ -2,8 +2,8 @@
 Base class for components.
 """
 
-import os
 from abc import ABC, abstractmethod
+import os
 from typing import Any, Dict
 
 import torch

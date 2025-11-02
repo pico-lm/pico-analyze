@@ -50,9 +50,7 @@ class PERMetric(BaseMetric):
         layer_singular_values = layer_singular_values / layer_singular_values.sum()
 
         # compute effective rank (ER) and proportional effective rank (PER)
-        layer_er = torch.exp(
-            -torch.sum(layer_singular_values * torch.log(layer_singular_values))
-        ).item()
+        layer_er = torch.exp(-torch.sum(layer_singular_values * torch.log(layer_singular_values))).item()
         layer_per = layer_er / len(layer_singular_values)
 
         return layer_per
