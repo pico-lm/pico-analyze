@@ -1,0 +1,99 @@
+# This is a demo config for the pico-analyze tool. Feel free to use this as a template
+# to analyze your own models.
+
+analysis_name: "pico-decoder-demo-1-analysis"
+
+metrics: 
+
+  # CKA metric (Comparative)
+  - metric_name: cka
+    target_checkpoint: 100
+    data_split: "val"
+    components: 
+      - component_name: ov_circuit
+        data_type: "activations"
+        layer_suffixes: 
+          output_layer: "attention.o_proj"
+          value_layer: "attention.v_proj"
+        layers: [0,11]
+
+  # PWCCA metric (Comparative)
+  - metric_name: pwcca
+    target_checkpoint: 100
+    data_split: "val"
+    components: 
+      - component_name: ov_circuit
+        data_type: "activations"
+        layer_suffixes: 
+          output_layer: "attention.o_proj"
+          value_layer: "attention.v_proj"
+        layers: [0,11]
+
+  # PER metric 
+  - metric_name: per
+    data_split: "train"
+    components: 
+      - component_name: simple
+        data_type: "gradients"
+        layer_suffixes: "swiglu.w_2"
+        layers: [0,11]
+
+  # Condition number metric
+  - metric_name: condition_number
+    data_split: "val"
+    components: 
+      - component_name: simple
+        data_type: "weights"
+        layer_suffixes: "swiglu.w_2"
+        layers: [0,11]
+
+  # Gini metric
+  - metric_name: gini
+    data_split: "val"
+    components: 
+      - component_name: simple
+        data_type: "weights"
+        layer_suffixes: "swiglu.w_2"
+        layers: [0,11]
+
+  # Hoyer metric
+  - metric_name: hoyer
+    data_split: "train"
+    components: 
+      - component_name: simple
+        data_type: "gradients"
+        layer_suffixes: "swiglu.w_2"
+        layers: [0,11]
+
+  # Nuclear norm metric
+  - metric_name: norm
+    data_split: "val"
+    norm_type: "nuclear"
+    components: 
+      - component_name: ov_circuit
+        data_type: "weights"
+        layer_suffixes: 
+          output_layer: "attention.o_proj"
+          value_layer: "attention.v_proj"
+        layers: [0,11]
+        
+
+steps: 
+  start: 0
+  end: 100
+  step: 50
+
+monitoring: 
+  output_dir: "analysis_results"
+
+  save_to_wandb: false
+  # wandb:
+  #   entity: "pico-lm"
+  #   project: "pico-demo"
+  
+  # Optional: Enable Pico Report integration
+  # Requires PICO_API_KEY and PICO_LAB_HASH environment variables
+  save_to_picolabs: true
+  pico_report:
+    lab_hash: ""  # Can also be set via PICO_LAB_HASH env var
+    auto_commit: true  # Automatically create git commits for each analysis run (default: true)
