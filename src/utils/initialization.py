@@ -157,16 +157,19 @@ def initialize_pico_reporter(config: LearningDynamicsConfig):
     except ImportError:
         raise ImportError("pico-report is not installed. Please install it with: " "pip install pico-report")
 
-    # Lab hash can be provided via config or environment variable
+    # Lab hash can be provided via config or environment variable (PICO_LAB_HASH)
     lab_hash = config.monitoring.pico_report.lab_hash
-    if not lab_hash or lab_hash == "":
+    if not lab_hash:
         lab_hash = os.getenv("PICO_LAB_HASH", "")
 
     assert (
         lab_hash is not None and lab_hash != ""
     ), "Lab hash must be provided via config (pico_report.lab_hash) or PICO_LAB_HASH environment variable."
 
-    experiment_name = config.analysis_name
+    # If no experiment name is specified, use the analysis name
+    experiment_name = config.monitoring.pico_report.experiment_name
+    if not experiment_name: 
+        experiment_name = config.analysis_name
 
     # Get auto_commit setting from config
     auto_commit = config.monitoring.pico_report.auto_commit

@@ -18,10 +18,9 @@ class PicoReportConfig:
     Configuration for Pico Report integration.
 
     Note: Requires PICO_API_KEY and PICO_LAB_HASH environment variables to be set.
-    Optional: PICO_BASE_URL (defaults to https://picolabs.space/api/report)
     """
-
     lab_hash: Optional[str] = None
+    experiment_name: Optional[str] = None
 
     # Git tracking: automatically create git commits for each analysis run
     # This captures the exact code state and links it to your analysis in the dashboard
