@@ -19,6 +19,7 @@ class PicoReportConfig:
 
     Note: Requires PICO_API_KEY and PICO_LAB_HASH environment variables to be set.
     """
+
     lab_hash: Optional[str] = None
     experiment_name: Optional[str] = None
 

@@ -168,7 +168,7 @@ def initialize_pico_reporter(config: LearningDynamicsConfig):
 
     # If no experiment name is specified, use the analysis name
     experiment_name = config.monitoring.pico_report.experiment_name
-    if not experiment_name: 
+    if not experiment_name:
         experiment_name = config.analysis_name
 
     # Get auto_commit setting from config
