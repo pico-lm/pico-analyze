@@ -159,7 +159,7 @@ print_success "Pre-commit initial run complete"
 print_section "Setup Status"
 if [ $ERRORS_FOUND -eq 0 ]; then
     print_success "Setup Complete! 🎉"
-    print_success "To activate the virtual environment, run: poetry shell"
+    print_success "To activate the virtual environment, run: source .venv/bin/activate"
 else
     print_warning "Setup completed with warnings! Please check the messages above."
     echo -e "${YELLOW}    Some features might not work as expected.${NC}"
